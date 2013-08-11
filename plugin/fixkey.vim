@@ -101,7 +101,17 @@ function! Fixkey_setXtermShiftedHomeEnd()
     call Fixkey_setKey("<S-End>", "\e[1;2F")
 endfunction
 
+function! Fixkey_setXtermKeys()
+    let g:Fixkey_termType = "xterm"
+    call Fixkey_setMetaLetters()
+    call Fixkey_setXtermF1toF4()
+    call Fixkey_setXtermHomeEnd()
+    call Fixkey_setXtermShiftedF1toF4()
+    call Fixkey_setXtermShiftedHomeEnd()
+endfunction
+
 function! Fixkey_setGnomeTerminalKeys()
+    let g:Fixkey_termType = "gnome"
     call Fixkey_setMetaLetters()
     call Fixkey_setXtermF1toF4()
     call Fixkey_setXtermHomeEnd()
@@ -109,14 +119,6 @@ function! Fixkey_setGnomeTerminalKeys()
     call Fixkey_setNewKey("<S-F2>", "\eO1;2Q")
     call Fixkey_setNewKey("<S-F3>", "\eO1;2R")
     call Fixkey_setNewKey("<S-F4>", "\eO1;2S")
-endfunction
-
-function! Fixkey_setXtermKeys()
-    call Fixkey_setMetaLetters()
-    call Fixkey_setXtermF1toF4()
-    call Fixkey_setXtermHomeEnd()
-    call Fixkey_setXtermShiftedF1toF4()
-    call Fixkey_setXtermShiftedHomeEnd()
 endfunction
 
 " setKey is "setKey" or "setNewKey".
@@ -140,6 +142,7 @@ function! Fixkey_setKonsoleCtrlArrows()
 endfunction
 
 function! Fixkey_setKonsoleKeys()
+    let g:Fixkey_termType = "konsole"
     call Fixkey_setMetaLetters()
     call Fixkey_setNewKey("<S-F1>", "\eO2P")
     call Fixkey_setNewKey("<S-F2>", "\eO2Q")
@@ -156,6 +159,7 @@ function! Fixkey_setLinuxHomeEnd()
 endfunction
 
 function! Fixkey_setLinuxKeys()
+    let g:Fixkey_termType = "linux"
     call Fixkey_setMetaLetters()
     call Fixkey_setKey("<F1>", "\e[[A")
     call Fixkey_setKey("<F2>", "\e[[B")
@@ -198,13 +202,8 @@ function! Fixkey_setPuttyCtrlArrows()
     call Fixkey_setNewKey("<C-Right>", "\eOC")
 endfunction
 
-function! Fixkey_setPuttyKeys()
-    call Fixkey_setMetaLetters()
-    call Fixkey_setPuttyShiftedF3toF10()
-    call Fixkey_setPuttyCtrlArrows()
-endfunction
-
 function! Fixkey_setPuttyScoKeys()
+    let g:Fixkey_termType = "putty-sco"
     call Fixkey_setMetaLetters()
     call Fixkey_setNewKey("<S-F1>", "\e[Y")
     call Fixkey_setNewKey("<S-F2>", "\e[Z")
@@ -221,10 +220,18 @@ function! Fixkey_setPuttyScoKeys()
     call Fixkey_setPuttyCtrlArrows()
 endfunction
 
+function! Fixkey_setPuttyKeys()
+    let g:Fixkey_termType = "putty"
+    call Fixkey_setMetaLetters()
+    call Fixkey_setPuttyShiftedF3toF10()
+    call Fixkey_setPuttyCtrlArrows()
+endfunction
+
 function! Fixkey_setRxvtKeys()
+    let g:Fixkey_termType = "rxvt"
     " <Undo> is \e[26~, which aliases <S-F4>.  Undefine it to avoid conflict.
     set <Undo>=
-    " <Help> is \e28~, which aliases <S-F4>.  Undefine it to avoid conflict.
+    " <Help> is \e28~, which aliases <S-F5>.  Undefine it to avoid conflict.
     set <Help>=
     call Fixkey_setMetaLetters()
     call Fixkey_setPuttyShiftedF3toF10()
@@ -237,6 +244,7 @@ function! Fixkey_setRxvtKeys()
 endfunction
 
 function! Fixkey_setScreenKeys()
+    let g:Fixkey_termType = "screen"
     call Fixkey_setMetaLetters()
     call Fixkey_setXtermShiftedF1toF4()
     call Fixkey_setKonsoleShiftedF5toF12("setKey")
@@ -245,29 +253,36 @@ function! Fixkey_setScreenKeys()
     call Fixkey_setKonsoleCtrlArrows()
 endfunction
 
-if $TERM =~# "gnome" || ($TERM =~# "^xterm" && $COLORTERM == "gnome-terminal")
+if $TERM =~# '^xterm\(-\d*color\)\?$'
+    if $COLORTERM == "gnome-terminal"
+        call Fixkey_setGnomeTerminalKeys()
+    else
+        call Fixkey_setXtermKeys()
+    endif
+
+elseif $TERM =~# '^gnome\(-\d*color\)\?$'
      call Fixkey_setGnomeTerminalKeys()
 
-elseif $TERM =~# "^xterm"
-    call Fixkey_setXtermKeys()
-
-elseif $TERM =~# "^konsole"
+elseif $TERM =~# '^konsole\(-\d*color\)\?$'
     call Fixkey_setKonsoleKeys()
 
-elseif $TERM == "linux"
+elseif $TERM == 'linux'
     call Fixkey_setLinuxKeys()
 
-elseif $TERM == "putty" || $TERM == "putty-256color"
-    call Fixkey_setPuttyKeys()
-
-elseif $TERM == "putty-sco"
+elseif $TERM == 'putty-sco'
     call Fixkey_setPuttyScoKeys()
 
-elseif $TERM =~# "rxvt"
+elseif $TERM =~# '^putty\(-\d*color\)\?$'
+    call Fixkey_setPuttyKeys()
+
+elseif $TERM =~# '^rxvt\(-unicode\)\?\(-\d*color\)\?$'
     call Fixkey_setRxvtKeys()
 
-elseif $TERM =~# "screen"
+elseif $TERM =~# '^screen\(-\d*color\)\?$'
     call Fixkey_setScreenKeys()
+
+else
+    let g:Fixkey_termType = "unknown"
 endif
 
 " Restore saved 'cpoptions'.

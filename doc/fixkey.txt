@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.2.0
+*fixkey*      Version 0.2.1
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
