@@ -77,58 +77,82 @@ function! Fixkey_resetMetaLetters()
     endwhile
 endfunction
 
-function! Fixkey_setFirstFourFuncKeys()
+function! Fixkey_setXtermF1toF4()
     call Fixkey_setKey("<F1>", "\eOP")
     call Fixkey_setKey("<F2>", "\eOQ")
     call Fixkey_setKey("<F3>", "\eOR")
     call Fixkey_setKey("<F4>", "\eOS")
 endfunction
 
-function! Fixkey_setGnomeTerminalKeys()
-    call Fixkey_setMetaLetters()
-    call Fixkey_setFirstFourFuncKeys()
-    call Fixkey_setNewKey("<S-F1>", "\eO1;2P")
-    call Fixkey_setNewKey("<S-F2>", "\eO1;2Q")
-    call Fixkey_setNewKey("<S-F3>", "\eO1;2R")
-    call Fixkey_setNewKey("<S-F4>", "\eO1;2S")
-    call Fixkey_setKey("<Home>", "\eOH")
-    call Fixkey_setKey("<End>", "\eOF")
-endfunction
-
-function! Fixkey_setXtermKeys()
-    call Fixkey_setMetaLetters()
-    call Fixkey_setFirstFourFuncKeys()
-
+function! Fixkey_setXtermShiftedF1toF4()
     call Fixkey_setKey("<S-F1>", "\e[1;2P")
     call Fixkey_setKey("<S-F2>", "\e[1;2Q")
     call Fixkey_setKey("<S-F3>", "\e[1;2R")
     call Fixkey_setKey("<S-F4>", "\e[1;2S")
+endfunction
 
+function! Fixkey_setXtermHomeEnd()
     call Fixkey_setKey("<Home>", "\eOH")
     call Fixkey_setKey("<End>", "\eOF")
+endfunction
 
+function! Fixkey_setXtermShiftedHomeEnd()
     call Fixkey_setKey("<S-Home>", "\e[1;2H")
     call Fixkey_setKey("<S-End>", "\e[1;2F")
 endfunction
 
+function! Fixkey_setGnomeTerminalKeys()
+    call Fixkey_setMetaLetters()
+    call Fixkey_setXtermF1toF4()
+    call Fixkey_setXtermHomeEnd()
+    call Fixkey_setNewKey("<S-F1>", "\eO1;2P")
+    call Fixkey_setNewKey("<S-F2>", "\eO1;2Q")
+    call Fixkey_setNewKey("<S-F3>", "\eO1;2R")
+    call Fixkey_setNewKey("<S-F4>", "\eO1;2S")
+endfunction
+
+function! Fixkey_setXtermKeys()
+    call Fixkey_setMetaLetters()
+    call Fixkey_setXtermF1toF4()
+    call Fixkey_setXtermHomeEnd()
+    call Fixkey_setXtermShiftedF1toF4()
+    call Fixkey_setXtermShiftedHomeEnd()
+endfunction
+
+" setKey is "setKey" or "setNewKey".
+function! Fixkey_setKonsoleShiftedF5toF12(setKey)
+    let SetKeyFn = function("Fixkey_" . a:setKey)
+    call SetKeyFn("<S-F5>", "\e[15;2~")
+    call SetKeyFn("<S-F6>", "\e[17;2~")
+    call SetKeyFn("<S-F7>", "\e[18;2~")
+    call SetKeyFn("<S-F8>", "\e[19;2~")
+    call SetKeyFn("<S-F9>", "\e[20;2~")
+    call SetKeyFn("<S-F10>", "\e[21;2~")
+    call SetKeyFn("<S-F11>", "\e[23;2~")
+    call SetKeyFn("<S-F12>", "\e[24;2~")
+endfunction
+
+function! Fixkey_setKonsoleCtrlArrows()
+    call Fixkey_setNewKey("<C-Up>", "\e[1;5A")
+    call Fixkey_setNewKey("<C-Down>", "\e[1;5B")
+    call Fixkey_setNewKey("<C-Left>", "\e[1;5D")
+    call Fixkey_setNewKey("<C-Right>", "\e[1;5C")
+endfunction
+
 function! Fixkey_setKonsoleKeys()
     call Fixkey_setMetaLetters()
-
     call Fixkey_setNewKey("<S-F1>", "\eO2P")
     call Fixkey_setNewKey("<S-F2>", "\eO2Q")
     call Fixkey_setNewKey("<S-F3>", "\eO2R")
     call Fixkey_setNewKey("<S-F4>", "\eO2S")
-    call Fixkey_setNewKey("<S-F5>", "\e[15;2~")
-    call Fixkey_setNewKey("<S-F6>", "\e[17;2~")
-    call Fixkey_setNewKey("<S-F7>", "\e[18;2~")
-    call Fixkey_setNewKey("<S-F8>", "\e[19;2~")
-    call Fixkey_setNewKey("<S-F9>", "\e[20;2~")
-    call Fixkey_setNewKey("<S-F10>", "\e[21;2~")
-    call Fixkey_setNewKey("<S-F11>", "\e[23;2~")
-    call Fixkey_setNewKey("<S-F12>", "\e[24;2~")
+    call Fixkey_setKonsoleShiftedF5toF12("setNewKey")
+    call Fixkey_setXtermShiftedHomeEnd()
+    call Fixkey_setKonsoleCtrlArrows()
+endfunction
 
-    call Fixkey_setKey("<S-Home>", "\e[1;2H")
-    call Fixkey_setKey("<S-End>", "\e[1;2F")
+function! Fixkey_setLinuxHomeEnd()
+    call Fixkey_setKey("<Home>", "\e[1~")
+    call Fixkey_setKey("<End>", "\e[4~")
 endfunction
 
 function! Fixkey_setLinuxKeys()
@@ -145,7 +169,6 @@ function! Fixkey_setLinuxKeys()
     call Fixkey_setKey("<F10>", "\e[21~")
     call Fixkey_setKey("<F11>", "\e[23~")
     call Fixkey_setKey("<F12>", "\e[24~")
-
     call Fixkey_setNewKey("<S-F1>", "\e[25~")
     call Fixkey_setNewKey("<S-F2>", "\e[26~")
     call Fixkey_setNewKey("<S-F3>", "\e[28~")
@@ -154,13 +177,10 @@ function! Fixkey_setLinuxKeys()
     call Fixkey_setNewKey("<S-F6>", "\e[32~")
     call Fixkey_setNewKey("<S-F7>", "\e[33~")
     call Fixkey_setNewKey("<S-F8>", "\e[34~")
-
-    call Fixkey_setKey("<Home>", "\e[1~")
-    call Fixkey_setKey("<End>", "\e[4~")
+    call Fixkey_setLinuxHomeEnd()
 endfunction
 
-function! Fixkey_setPuttyKeys()
-    call Fixkey_setMetaLetters()
+function! Fixkey_setPuttyShiftedF3toF10()
     call Fixkey_setNewKey("<S-F3>", "\e[25~")
     call Fixkey_setNewKey("<S-F4>", "\e[26~")
     call Fixkey_setNewKey("<S-F5>", "\e[28~")
@@ -169,6 +189,19 @@ function! Fixkey_setPuttyKeys()
     call Fixkey_setNewKey("<S-F8>", "\e[32~")
     call Fixkey_setNewKey("<S-F9>", "\e[33~")
     call Fixkey_setNewKey("<S-F10>", "\e[34~")
+endfunction
+
+function! Fixkey_setPuttyCtrlArrows()
+    call Fixkey_setNewKey("<C-Up>", "\eOA")
+    call Fixkey_setNewKey("<C-Down>", "\eOB")
+    call Fixkey_setNewKey("<C-Left>", "\eOD")
+    call Fixkey_setNewKey("<C-Right>", "\eOC")
+endfunction
+
+function! Fixkey_setPuttyKeys()
+    call Fixkey_setMetaLetters()
+    call Fixkey_setPuttyShiftedF3toF10()
+    call Fixkey_setPuttyCtrlArrows()
 endfunction
 
 function! Fixkey_setPuttyScoKeys()
@@ -185,26 +218,31 @@ function! Fixkey_setPuttyScoKeys()
     call Fixkey_setNewKey("<S-F10>", "\e[h")
     call Fixkey_setNewKey("<S-F11>", "\e[i")
     call Fixkey_setNewKey("<S-F12>", "\e[j")
+    call Fixkey_setPuttyCtrlArrows()
 endfunction
 
 function! Fixkey_setRxvtKeys()
     " <Undo> is \e[26~, which aliases <S-F4>.  Undefine it to avoid conflict.
     set <Undo>=
-
     " <Help> is \e28~, which aliases <S-F4>.  Undefine it to avoid conflict.
     set <Help>=
-
     call Fixkey_setMetaLetters()
-    call Fixkey_setNewKey("<S-F3>", "\e[25~")
-    call Fixkey_setNewKey("<S-F4>", "\e[26~")
-    call Fixkey_setNewKey("<S-F5>", "\e[28~")
-    call Fixkey_setNewKey("<S-F6>", "\e[29~")
-    call Fixkey_setNewKey("<S-F7>", "\e[31~")
-    call Fixkey_setNewKey("<S-F8>", "\e[32~")
-    call Fixkey_setNewKey("<S-F9>", "\e[33~")
-    call Fixkey_setNewKey("<S-F10>", "\e[34~")
+    call Fixkey_setPuttyShiftedF3toF10()
     call Fixkey_setNewKey("<S-F11>", "\e[23$")
     call Fixkey_setNewKey("<S-F12>", "\e[24$")
+    call Fixkey_setNewKey("<C-Up>", "\eOa")
+    call Fixkey_setNewKey("<C-Down>", "\eOb")
+    call Fixkey_setNewKey("<C-Left>", "\eOd")
+    call Fixkey_setNewKey("<C-Right>", "\eOc")
+endfunction
+
+function! Fixkey_setScreenKeys()
+    call Fixkey_setMetaLetters()
+    call Fixkey_setXtermShiftedF1toF4()
+    call Fixkey_setKonsoleShiftedF5toF12("setKey")
+    call Fixkey_setLinuxHomeEnd()
+    call Fixkey_setXtermShiftedHomeEnd()
+    call Fixkey_setKonsoleCtrlArrows()
 endfunction
 
 if $TERM =~# "gnome" || ($TERM =~# "^xterm" && $COLORTERM == "gnome-terminal")
@@ -227,6 +265,9 @@ elseif $TERM == "putty-sco"
 
 elseif $TERM =~# "rxvt"
     call Fixkey_setRxvtKeys()
+
+elseif $TERM =~# "screen"
+    call Fixkey_setScreenKeys()
 endif
 
 " Restore saved 'cpoptions'.

@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.1.0  
+*fixkey*      Version 0.2.0
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -11,7 +11,9 @@
 3.4   Setup Linux console                           |fixkey-term-linux|
 3.5   Setup PuTTY                                   |fixkey-term-putty|
 3.6   Setup rxvt                                    |fixkey-term-rxvt|
-3.7   Terminal testing                              |fixkey-term-testing|
+3.7   Setup screen                                  |fixkey-term-screen|
+3.8   Setup tmux                                    |fixkey-term-tmux|
+3.9   Terminal testing                              |fixkey-term-testing|
 4.  References                                      |fixkey-references|
 5.  Credits                                         |fixkey-credits|
 
@@ -26,7 +28,7 @@ keys (e.g., function keys, alt+letters, etc.).
 ===============================================================================
 2.  Installation                                    *fixkey-installation*
 
-To install directly in your personal |vimfiles| directory (~/.vim under 
+To install directly in your personal |vimfiles| directory (~/.vim under
 unix or %HOMEPATH%\vimfiles under windows), unpack the downloaded archive
 to yield these files: >
 
@@ -71,6 +73,7 @@ keys:
   - Alt-uppercase letters (<M-A> - <M-Z>).
   - Arrow keys (<Up>, <Down>, <Left>, <Right>).
   - Shifted Arrow keys (<S-Up>, <S-Down>, <S-Left>, <S-Right>).
+  - Control Arrow keys (<C-Up>, <C-Down>, <C-Left>, <C-Right>).
   - <Home>, <End>, <S-Home>, <S-End>.
 
 -------------------------------------------------------------------------------
@@ -228,6 +231,10 @@ Aliased keys:
 
   <S-Home>      (same as <Home>)
   <S-End>       (same as <End>)
+  <C-Up>        (same as <Up>)
+  <C-Down>      (same as <Down>)
+  <C-Left>      (same as <Left>)
+  <C-Right>     (same as <Right>)
 
 -------------------------------------------------------------------------------
 3.5   Setup PuTTY                                   *fixkey-term-putty*
@@ -302,7 +309,51 @@ Aliased keys:
   <S-F2>        (same as <F12>)
 
 -------------------------------------------------------------------------------
-3.7   Terminal testing                              *fixkey-term-testing*
+3.7   Setup screen                                  *fixkey-term-screen*
+
+There is no additional setup for using screen (TERM=screen,
+TERM=screen-256color).
+
+Inoperable keys (terminal sends no codes):
+
+  none
+
+Aliased keys:
+
+  none
+
+-------------------------------------------------------------------------------
+3.8   Setup tmux                                    *fixkey-term-tmux*
+
+Tmux shares terminal names with screen (TERM=screen, TERM=screen-256color),
+so fixkey treats them the same.
+
+In your ~/.tmux.conf, do not set default-terminal; instead, allow tmux to set
+it properly to either screen or screen-256color.  Otherwise, things won't work
+properly according to the tmux FAQ, which says: >
+
+  PLEASE NOTE: most display problems are due to incorrect TERM! Before
+  reporting problems make SURE that TERM settings are correct inside and
+  outside tmux.
+
+  Inside tmux TERM must be "screen" or similar (such as "screen-256color").
+  Don't bother reporting problems where it isn't!
+
+In addition, to enable shifted function keys, place the following setting in
+~/.tmux.conf: >
+
+  set -g xterm-keys on
+
+Inoperable keys (terminal sends no codes):
+
+  none
+
+Aliased keys:
+
+  none
+
+-------------------------------------------------------------------------------
+3.9   Terminal testing                              *fixkey-term-testing*
 
 Fixkey comes with a test script that helps determine when keys are working
 correctly.  Launch console vim as follows to initiate the test: >
@@ -335,7 +386,7 @@ program: >
           am, bce, km, mc5i, mir, msgr, npc, xenl,
           colors#8, cols#80, it#8, lines#24, pairs#64,
   [...]
-    
+
 In addition, differences in terminfo between two terminals can be displayed as
 well.  To see what changes between xterm and xterm-256color: >
 
@@ -353,7 +404,7 @@ well.  To see what changes between xterm and xterm-256color: >
           setaf: '\E[3%p1%dm', '\E[%?%p1%{8}%<%t3%p1%d%e%p1%{16}%<%t9%p1%{8}%-%d%e38;5;%p1%d%;m'.
           setb: '\E[4%?%p1%{1}%=%t4%e%p1%{3}%=%t6%e%p1%{4}%=%t1%e%p1%{6}%=%t3%e%p1%d%;m', NULL.
           setf: '\E[3%?%p1%{1}%=%t4%e%p1%{3}%=%t6%e%p1%{4}%=%t1%e%p1%{6}%=%t3%e%p1%d%;m', NULL.
-    
+
 ===============================================================================
 4.  References                                      *fixkey-references*
 

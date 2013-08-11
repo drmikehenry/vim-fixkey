@@ -39,5 +39,9 @@ call MapTestKeyWithShifted("Home")
 call MapTestKeyWithShifted("End")
 call MapTestKeyWithShifted("Insert")
 call MapTestKeyWithShifted("Delete")
+call MapTestKey("C-Up")
+call MapTestKey("C-Down")
+call MapTestKey("C-Left")
+call MapTestKey("C-Right")
 
 " vim:tw=80:ts=4:sts=4:sw=4:et:ai
