@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.2.1
+*fixkey*      Version 0.2.2
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -75,6 +75,11 @@ keys:
   - Shifted Arrow keys (<S-Up>, <S-Down>, <S-Left>, <S-Right>).
   - Control Arrow keys (<C-Up>, <C-Down>, <C-Left>, <C-Right>).
   - <Home>, <End>, <S-Home>, <S-End>.
+  - <M-Enter> (not all terminals).
+  - <S-Enter> (few terminals).
+
+Note that <C-Enter> generally seems to alias <Enter> on most terminals and is
+therefore unavailable.
 
 -------------------------------------------------------------------------------
 3.1   Setup xterm                                   *fixkey-term-xterm*
@@ -105,7 +110,17 @@ Inoperable keys (terminal sends no codes):
 
 Aliased keys:
 
-  none
+  <C-Enter>     (same as <Enter>)
+
+By default, xterm toggles its fullscreen state on <M-Enter>.  To allow this
+key to be seen by Vim, the following two lines should be added to your
+~/.Xresources file: >
+
+  XTerm*fullscreen: never
+  XTerm.omitTranslation: fullscreen
+
+For more information, see:
+http://forums.opensuse.org/english/get-technical-help-here/applications/459502-how-disable-alt-enter-maximize.html
 
 -------------------------------------------------------------------------------
 3.2   Setup gnome-terminal                          *fixkey-term-gnome*
@@ -134,10 +149,12 @@ Inoperable keys (terminal sends no codes):
   <S-F10>       (reserved for context menu)
   <S-Home>      (reserved for scrollback)
   <S-End>       (reserved for scrollback)
+  <M-Enter>     (seems to send \e\n, but can't map it correctly in Vim)
 
 Aliased keys:
 
-  none
+  <S-Enter>     (same as <Enter>)
+  <C-Enter>     (same as <C-@>)
 
 -------------------------------------------------------------------------------
 3.3   Setup Konsole                                 *fixkey-term-konsole*
@@ -190,7 +207,7 @@ Inoperable keys (terminal sends no codes):
 
 Aliased keys:
 
-  none
+  <C-Enter>     (same as <Enter>)
 
 ```````````````````````````````````````````````````````````````````````````````
 Option 2: Use TERM=konsole (or TERM=konsole-256color).
@@ -212,7 +229,7 @@ Inoperable keys (terminal sends no codes):
 
 Aliased keys:
 
-  none
+  <C-Enter>     (same as <Enter>)
 
 -------------------------------------------------------------------------------
 3.4   Setup Linux console                           *fixkey-term-linux*
@@ -235,6 +252,8 @@ Aliased keys:
   <C-Down>      (same as <Down>)
   <C-Left>      (same as <Left>)
   <C-Right>     (same as <Right>)
+  <S-Enter>     (same as <Enter>)
+  <C-Enter>     (same as <Enter>)
 
 -------------------------------------------------------------------------------
 3.5   Setup PuTTY                                   *fixkey-term-putty*
@@ -266,6 +285,8 @@ Aliased keys:
   <S-F12>       (same as <F12>)
   <S-Home>      (same as <Home>)
   <S-End>       (same as <End>)
+  <S-Enter>     (same as <Enter>)
+  <C-Enter>     (same as <Enter>)
 
 ```````````````````````````````````````````````````````````````````````````````
 Option 2: Use TERM=putty-sco
@@ -291,6 +312,8 @@ Aliased keys:
   <Delete>      (same as <Backspace>)
   <S-Home>      (same as <Home>)
   <S-End>       (same as <End>)
+  <S-Enter>     (same as <Enter>)
+  <C-Enter>     (same as <Enter>)
 
 -------------------------------------------------------------------------------
 3.6   Setup rxvt                                    *fixkey-term-rxvt*
@@ -307,6 +330,8 @@ Aliased keys:
 
   <S-F1>        (same as <F11>)
   <S-F2>        (same as <F12>)
+  <S-Enter>     (same as <Enter>)
+  <C-Enter>     (same as <Enter>)
 
 -------------------------------------------------------------------------------
 3.7   Setup screen                                  *fixkey-term-screen*
@@ -320,7 +345,10 @@ Inoperable keys (terminal sends no codes):
 
 Aliased keys:
 
-  none
+  <C-Enter>     (same as <Enter>)
+
+Note that support for <M-Enter> and <S-Enter> requires using Konsole as the
+host terminal at present.
 
 -------------------------------------------------------------------------------
 3.8   Setup tmux                                    *fixkey-term-tmux*
@@ -350,7 +378,10 @@ Inoperable keys (terminal sends no codes):
 
 Aliased keys:
 
-  none
+  <C-Enter>     (same as <Enter>)
+
+Note that support for <M-Enter> and <S-Enter> requires using Konsole as the
+host terminal at present.
 
 -------------------------------------------------------------------------------
 3.9   Terminal testing                              *fixkey-term-testing*
@@ -358,23 +389,19 @@ Aliased keys:
 Fixkey comes with a test script that helps determine when keys are working
 correctly.  Launch console vim as follows to initiate the test: >
 
-  vim '+runtime scripts/fixkeystest.vim'
+  vim '+runtime scripts/fixkeytest.vim'
 
 Alternatively, launch console Vim, then run the following command: >
 
-  :runtime scripts/fixkeystest.vim
+  :runtime scripts/fixkeytest.vim
 
 Now press keys in normal-mode or insert-mode and observe whether the correct
 key is displayed.
 
-In addition, you can check the terminfo database for the expected key codes
-for known keys.  The tput command can echo a key code, and the cat program can
-display the result.  For example, to check the key code for <F1> on an xterm: >
-
-  tput -Txterm kf1 | cat -A; echo
-  ^[OP
-
-This shows that the key code is \eOP (<Escape>OP) for "kf1" (<F1>).
+Also, while in insert mode in Vim, pressing CTRL-v will allow literal
+insertion of the next keypress.  This helps for keys like <Enter> that
+shouldn't be remapped by "fixkeytest".  Pressing CTRL-v <Enter> in insert mode
+yields "^M", showing that <Enter> generates CTRL-M (carriage return).
 
 The terminfo settings for the entire terminal can be shown via the infocmp
 program: >
@@ -405,6 +432,65 @@ well.  To see what changes between xterm and xterm-256color: >
           setb: '\E[4%?%p1%{1}%=%t4%e%p1%{3}%=%t6%e%p1%{4}%=%t1%e%p1%{6}%=%t3%e%p1%d%;m', NULL.
           setf: '\E[3%?%p1%{1}%=%t4%e%p1%{3}%=%t6%e%p1%{4}%=%t1%e%p1%{6}%=%t3%e%p1%d%;m', NULL.
 
+You can check the terminfo database for the expected key codes for known keys.
+The tput command can echo a key code, and the cat program can display the
+result.  For example, to check the key code for <F1> on an xterm, the
+terminfo "capability" name "kf1" may be queried: >
+
+  tput -Txterm kf1 | cat -A; echo
+  ^[OP
+
+This shows that the key code is \eOP (<Escape>OP) for "kf1" (<F1>).
+
+Many terminals support "keypad transmit mode".  In this mode, certain keys
+(such as arrow keys) may become active, or may change key codes.
+
+Interactive applications such as Vim typically set keypad transmit mode at
+startup and reset it before they terminate, so it's important to use the right
+terminfo capability name for the expected mode.
+
+As an example, the <Up> arrow key has two different capability names.  When
+keypad transmit mode is enabled, the capability is named "kcuu1"; otherwise,
+it is "cuu1" (dropping the leading "k").  For an xterm, these are different: >
+
+  tput -Txterm kcuu1 | cat -A; echo
+  ^[OA
+
+  tput -Txterm cuu1 | cat -A; echo
+  ^[[A
+
+To interactively see what all keys do for the current terminal, you can run
+the following commands at the shell prompt.  The first places the terminal
+into keypad transmit mode, the second displays the escape sequences, and the
+third turns keypad transmit mode back off: >
+
+  tput smkx; cat > /dev/null; tput rmkx
+
+Terminate testing by pressing CTRL-d.  
+
+If your terminal gets stuck in a strange mode, issue "reset" at the shell
+prompt to restore proper operation.
+
+Alternatively, a hex dump of the keys can be shown by replacing the "cat" with
+a hexdumping tool (such as "xxd"): >
+
+  tput smkx; xxd; tput rmkx
+
+Press and hold the key of interest for a while, then press <Enter> to flush
+the input stream and see the hex output.  For example, pressing <Up> for a
+while, then pressing <Enter>, yields: >
+
+  0000000: 1b4f 411b 4f41 1b4f 411b 4f41 1b4f 411b  .OA.OA.OA.OA.OA.
+
+Thus, <Up> yields <Escape>OA on this terminal.
+
+Using just "xxd" shows the sequence when not in keypad transmit mode: >
+
+  xxd
+  0000000: 1b5b 411b 5b41 1b5b 411b 5b41 1b5b 411b  .[A.[A.[A.[A.[A.
+
+Now, <Up> yields <Escape>[A because keypad transmit mode is off.
+
 ===============================================================================
 4.  References                                      *fixkey-references*
 
@@ -425,6 +511,15 @@ well.  To see what changes between xterm and xterm-256color: >
 
 - Function keys don't work in gnome-terminal:
   https://bugs.launchpad.net/ubuntu/+source/gnome-terminal/+bug/96676
+
+- Terminfo Source Format, from The Single Unix Specification, Version 2:
+  http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
+
+- Xterm control sequences:
+  http://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+
+- X resources (Arch Linux wiki):
+  https://wiki.archlinux.org/index.php/X_resources
 
 ===============================================================================
 5.  Credits                                         *fixkey-credits*

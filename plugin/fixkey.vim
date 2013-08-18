@@ -108,6 +108,9 @@ function! Fixkey_setXtermKeys()
     call Fixkey_setXtermHomeEnd()
     call Fixkey_setXtermShiftedF1toF4()
     call Fixkey_setXtermShiftedHomeEnd()
+    call Fixkey_setKey("<M-Enter>", "\e\r")
+    " For KDE Konsole with TERM=xterm; true xterm doesn't work.
+    call Fixkey_setNewKey("<S-Enter>", "\eOM")
 endfunction
 
 function! Fixkey_setGnomeTerminalKeys()
@@ -119,6 +122,8 @@ function! Fixkey_setGnomeTerminalKeys()
     call Fixkey_setNewKey("<S-F2>", "\eO1;2Q")
     call Fixkey_setNewKey("<S-F3>", "\eO1;2R")
     call Fixkey_setNewKey("<S-F4>", "\eO1;2S")
+    " Can't get this to work:
+    " call Fixkey_setKey("<M-Enter>", "\e\n")
 endfunction
 
 " setKey is "setKey" or "setNewKey".
@@ -151,6 +156,8 @@ function! Fixkey_setKonsoleKeys()
     call Fixkey_setKonsoleShiftedF5toF12("setNewKey")
     call Fixkey_setXtermShiftedHomeEnd()
     call Fixkey_setKonsoleCtrlArrows()
+    call Fixkey_setKey("<M-Enter>", "\e\r")
+    call Fixkey_setNewKey("<S-Enter>", "\eOM")
 endfunction
 
 function! Fixkey_setLinuxHomeEnd()
@@ -182,6 +189,7 @@ function! Fixkey_setLinuxKeys()
     call Fixkey_setNewKey("<S-F7>", "\e[33~")
     call Fixkey_setNewKey("<S-F8>", "\e[34~")
     call Fixkey_setLinuxHomeEnd()
+    call Fixkey_setKey("<M-Enter>", "\e\r")
 endfunction
 
 function! Fixkey_setPuttyShiftedF3toF10()
@@ -202,6 +210,14 @@ function! Fixkey_setPuttyCtrlArrows()
     call Fixkey_setNewKey("<C-Right>", "\eOC")
 endfunction
 
+function! Fixkey_setPuttyKeys()
+    let g:Fixkey_termType = "putty"
+    call Fixkey_setMetaLetters()
+    call Fixkey_setPuttyShiftedF3toF10()
+    call Fixkey_setPuttyCtrlArrows()
+    call Fixkey_setKey("<M-Enter>", "\e\r")
+endfunction
+
 function! Fixkey_setPuttyScoKeys()
     let g:Fixkey_termType = "putty-sco"
     call Fixkey_setMetaLetters()
@@ -218,13 +234,7 @@ function! Fixkey_setPuttyScoKeys()
     call Fixkey_setNewKey("<S-F11>", "\e[i")
     call Fixkey_setNewKey("<S-F12>", "\e[j")
     call Fixkey_setPuttyCtrlArrows()
-endfunction
-
-function! Fixkey_setPuttyKeys()
-    let g:Fixkey_termType = "putty"
-    call Fixkey_setMetaLetters()
-    call Fixkey_setPuttyShiftedF3toF10()
-    call Fixkey_setPuttyCtrlArrows()
+    call Fixkey_setKey("<M-Enter>", "\e\r")
 endfunction
 
 function! Fixkey_setRxvtKeys()
@@ -241,6 +251,7 @@ function! Fixkey_setRxvtKeys()
     call Fixkey_setNewKey("<C-Down>", "\eOb")
     call Fixkey_setNewKey("<C-Left>", "\eOd")
     call Fixkey_setNewKey("<C-Right>", "\eOc")
+    call Fixkey_setKey("<M-Enter>", "\e\r")
 endfunction
 
 function! Fixkey_setScreenKeys()
@@ -251,6 +262,9 @@ function! Fixkey_setScreenKeys()
     call Fixkey_setLinuxHomeEnd()
     call Fixkey_setXtermShiftedHomeEnd()
     call Fixkey_setKonsoleCtrlArrows()
+    call Fixkey_setKey("<M-Enter>", "\e\r")
+    " <S-Enter> works when hosted under konsole.
+    call Fixkey_setNewKey("<S-Enter>", "\eOM")
 endfunction
 
 if $TERM =~# '^xterm\(-\d*color\)\?$'
