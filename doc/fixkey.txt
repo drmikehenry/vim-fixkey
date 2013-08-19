@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.2.2
+*fixkey*      Version 0.2.3
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -336,8 +336,17 @@ Aliased keys:
 -------------------------------------------------------------------------------
 3.7   Setup screen                                  *fixkey-term-screen*
 
-There is no additional setup for using screen (TERM=screen,
-TERM=screen-256color).
+There is no additional setup for using screen.
+
+Supported TERM values: >
+
+  screen [-###color]? [-bce]? [-s]?
+
+E.g., TERM=screen, TERM=screen-bce, TERM=screen-256color-bce-s
+
+The "-###color" variants have additional color support.
+The "-bce" variants use the Background Color Erase (BCE) feature.
+The "-s" variants support a status line.
 
 Inoperable keys (terminal sends no codes):
 
@@ -353,12 +362,13 @@ host terminal at present.
 -------------------------------------------------------------------------------
 3.8   Setup tmux                                    *fixkey-term-tmux*
 
-Tmux shares terminal names with screen (TERM=screen, TERM=screen-256color),
-so fixkey treats them the same.
+Tmux shares terminal names with screen, so fixkey treats them the same.
+See "Setup screen" section above for more details.
 
-In your ~/.tmux.conf, do not set default-terminal; instead, allow tmux to set
-it properly to either screen or screen-256color.  Otherwise, things won't work
-properly according to the tmux FAQ, which says: >
+In your ~/.tmux.conf, do not set default-terminal to something that doesn't
+start with "screen"; instead, either allow tmux to set it properly, or choose
+a value like "screen-256color-bce" that is meant for screen.  Otherwise,
+things won't work properly according to the tmux FAQ, which says: >
 
   PLEASE NOTE: most display problems are due to incorrect TERM! Before
   reporting problems make SURE that TERM settings are correct inside and
