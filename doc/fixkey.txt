@@ -84,8 +84,18 @@ therefore unavailable.
 -------------------------------------------------------------------------------
 3.1   Setup xterm                                   *fixkey-term-xterm*
 
-There is no additional setup for using xterm unless the xterm defaults are
-changed, as fixkey configures Vim to expect the correct key codes.
+There is not much additional setup for using xterm unless the xterm defaults
+are changed, as fixkey configures Vim to expect the correct key codes.
+
+However, by default, xterm toggles its fullscreen state on <M-Enter>.  To
+allow this key to be seen by Vim, the following two lines should be added to
+your ~/.Xresources file: >
+
+  XTerm*fullscreen: never
+  XTerm.omitTranslation: fullscreen
+
+For more information, see:
+http://forums.opensuse.org/english/get-technical-help-here/applications/459502-how-disable-alt-enter-maximize.html
 
 Because many terminal emulators masquerade as TERM=xterm, xterm has the
 privilege of defining the "correct" keycodes for various keys.
@@ -106,21 +116,11 @@ xterm-293 from Fedora 19:
 
 Inoperable keys (terminal sends no codes):
 
-  none
+  <M-Enter>     (unless ~/.Xresources is modified as explained above)
 
 Aliased keys:
 
   <C-Enter>     (same as <Enter>)
-
-By default, xterm toggles its fullscreen state on <M-Enter>.  To allow this
-key to be seen by Vim, the following two lines should be added to your
-~/.Xresources file: >
-
-  XTerm*fullscreen: never
-  XTerm.omitTranslation: fullscreen
-
-For more information, see:
-http://forums.opensuse.org/english/get-technical-help-here/applications/459502-how-disable-alt-enter-maximize.html
 
 -------------------------------------------------------------------------------
 3.2   Setup gnome-terminal                          *fixkey-term-gnome*
