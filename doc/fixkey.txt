@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.2.3
+*fixkey*      Version 0.3.0
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -67,19 +67,26 @@ your terminal setup.
 When properly setup, a fully functioning terminal can provide the following
 keys:
 
-  - Function keys (<F1> - <F12>).
-  - Shifted function keys (<S-F1> - <S-F12>).
   - Alt-lowercase letters (<M-a> - <M-z>).
-  - Alt-uppercase letters (<M-A> - <M-Z>).
-  - Arrow keys (<Up>, <Down>, <Left>, <Right>).
-  - Shifted Arrow keys (<S-Up>, <S-Down>, <S-Left>, <S-Right>).
-  - Control Arrow keys (<C-Up>, <C-Down>, <C-Left>, <C-Right>).
-  - <Home>, <End>, <S-Home>, <S-End>.
-  - <M-Enter> (not all terminals).
+  - Alt-uppercase letters (<M-A> - <M-Z>), except <M-O> due to keycode
+    ambiguity).
+  - Function keys with no modifiers or combinations of shift, control, and alt:
+    <F1> - <F12>, <S-F1> - <S-F12>, ..., <M-C-S-F1> - <M-C-S-F12>.
+    *Note* not all combination of terminal and environment send all of these.
+  - Arrow keys with no modifiers or combinations of shift, control, and alt:
+    <Up>, <Down>, <Left>, <Right>, <S-Up>, <S-Down>, <S-Left>, <S-Right>, ...,
+    <M-C-S-Up>, <M-C-S-Down>, <M-C-S-Left>, <M-C-S-Right>.
+  - Home and End keys with no modifiers or combinations of shift, control, and
+    alt: <Home>, <End>, <S-Home>, <S-End>, ..., <M-C-S-Home>, <M-C-S-End>.
   - <S-Enter> (few terminals).
+  - <M-Enter> (not all terminals).
 
 Note that <C-Enter> generally seems to alias <Enter> on most terminals and is
 therefore unavailable.
+
+Note that <M-O> is generally encoded as <Escape>O, which is a prefix of
+several terminal keycodes; therefore, fixkey does not attempt to configure
+<M-O>.
 
 -------------------------------------------------------------------------------
 3.1   Setup xterm                                   *fixkey-term-xterm*
@@ -100,27 +107,18 @@ http://forums.opensuse.org/english/get-technical-help-here/applications/459502-h
 Because many terminal emulators masquerade as TERM=xterm, xterm has the
 privilege of defining the "correct" keycodes for various keys.
 
-For comparison with other terminals, here are the default keycodes for
-xterm-293 from Fedora 19:
+Reserved keys (should work if environment passes them to Vim):
 
-  Key     Keycode
-
-    <F1>  \eOP
-    <F2>  \eOQ
-    <F3>  \eOR
-    <F4>  \eOS
-  <S-F1>  \e[1;2P
-  <S-F2>  \e[1;2Q
-  <S-F3>  \e[1;2R
-  <S-F4>  \e[1;2S
+  <M-C-F1> - <M-C-F12>          (reserved for switching virtual consoles)
+  <M-Enter>                     (reserved for fullscreen xterm switching)
 
 Inoperable keys (terminal sends no codes):
 
-  <M-Enter>     (unless ~/.Xresources is modified as explained above)
+  none
 
 Aliased keys:
 
-  <C-Enter>     (same as <Enter>)
+  <C-Enter>                     (same as <Enter>)
 
 -------------------------------------------------------------------------------
 3.2   Setup gnome-terminal                          *fixkey-term-gnome*
@@ -142,19 +140,52 @@ When COLORTERM is not set properly, the following keys won't work properly:
   <S-F2>
   <S-F3>
   <S-F4>
+  <C-S-F1>
+  <C-S-F2>
+  <C-S-F3>
+  <C-S-F4>
+  <M-S-F1>
+  <M-S-F2>
+  <M-S-F3>
+  <M-S-F4>
+  <M-C-S-F1>
+  <M-C-S-F2>
+  <M-C-S-F3>
+  <M-C-S-F4>
+
+Reserved keys (should work if environment passes them to Vim):
+
+  <M-C-F1> - <M-C-F12>          (reserved for switching virtual consoles)
 
 Inoperable keys (terminal sends no codes):
 
-  <F10>         (reserved for menu)
-  <S-F10>       (reserved for context menu)
-  <S-Home>      (reserved for scrollback)
-  <S-End>       (reserved for scrollback)
-  <M-Enter>     (seems to send \e\n, but can't map it correctly in Vim)
+  <F10>                         (reserved for menu)
+  <S-F10>                       (reserved for context menu)
+  <C-F1>
+  <C-S-Up>
+  <C-S-Down>
+  <M-C-S-Up>
+  <M-C-S-Down>
+  <S-Home>                      (reserved for scrollback)
+  <S-End>                       (reserved for scrollback)
+  <C-S-Home>                    (reserved for scrollback)
+  <C-S-End>                     (reserved for scrollback)
+  <M-S-Home>                    (reserved for scrollback)
+  <M-S-End>                     (reserved for scrollback)
+  <M-C-S-Home>                  (reserved for scrollback)
+  <M-C-S-End>                   (reserved for scrollback)
+  <M-Enter>                     (sends \x1b\x0a, but Vim doesn't like it)
 
 Aliased keys:
 
-  <S-Enter>     (same as <Enter>)
-  <C-Enter>     (same as <C-@>)
+  <C-Home>                      (same as <Home>)
+  <M-Home>                      (same as <Home>)
+  <M-C-Home>                    (same as <Home>)
+  <C-End>                       (same as <End>)
+  <M-End>                       (same as <End>)
+  <M-C-End>                     (same as <End>)
+  <C-Enter>                     (same as <C-@>)
+  <S-Enter>                     (same as <Enter>)
 
 -------------------------------------------------------------------------------
 3.3   Setup Konsole                                 *fixkey-term-konsole*
@@ -199,16 +230,6 @@ Using Konsole 2.10.5 (from Fedora 19) as an example:
 With these changes, Konsole will be xterm-compatible, both for Vim and for
 other programs that use terminfo.
 
-Default key codes for Konsole 2.10.5 (from Fedora 19):
-
-Inoperable keys (terminal sends no codes):
-
-  none
-
-Aliased keys:
-
-  <C-Enter>     (same as <Enter>)
-
 ```````````````````````````````````````````````````````````````````````````````
 Option 2: Use TERM=konsole (or TERM=konsole-256color).
 
@@ -223,13 +244,30 @@ bindings at their default and setup the TERM environment variable to match.
 
 - Save the profile and restart all Konsole instances.
 
+```````````````````````````````````````````````````````````````````````````````
+With either option:
+
+Reserved keys (should work if environment passes them to Vim):
+
+  <C-S-F10>                     (reserved for Konsole menu)
+  <C-S-F11>                     (reserved for KDE shortcut)
+  <M-F2>                        (reserved for KDE "Run Command Interface")
+  <M-F4>                        (reserved for KDE windows-close shortcut)
+  <M-S-F2>                      (reserved for KDE "Run Command Interface")
+  <M-S-F12>                     (reserved for KDE "suspend compositing")
+  <M-C-F1> - <M-C-F12>          (reserved for switching virtual consoles)
+  <S-Left>                      (reserved for Konsole "previous tab")
+  <S-Right>                     (reserved for Konsole "next tab")
+  <C-S-Left>                    (reserved for Konsole "move tab left")
+  <C-S-Right>                   (reserved for Konsole "move tab right")
+
 Inoperable keys (terminal sends no codes):
 
   none
 
 Aliased keys:
 
-  <C-Enter>     (same as <Enter>)
+  <C-Enter>                     (same as <Enter>)
 
 -------------------------------------------------------------------------------
 3.4   Setup Linux console                           *fixkey-term-linux*
@@ -239,21 +277,57 @@ There is no additional setup for using the Linux text-mode console
 
 Inoperable keys (terminal sends no codes):
 
+  <C-F1>     - <C-F12>
   <S-F9>
   <S-F10>
   <S-F11>
   <S-F12>
+  <C-S-F1>   - <C-S-F12>
+  <M-F1>     - <M-F12>          (reserved for virtual terminal switching)
+  <M-C-F1>   - <M-C-F12>        (reserved for virtual terminal switching)
+  <M-C-S-F1> - <M-C-S-F12>
+  <M-C-S-Home>
+  <M-C-S-End>
+  <M-Up>
+  <M-C-S-Up>
+  <M-C-S-Down>
+  <M-Left>                      (reserved for "previous virtual terminal")
+  <M-C-S-Left>
+  <M-Right>                     (reserved for "next virtual terminal")
+  <M-C-S-Right>
 
 Aliased keys:
 
-  <S-Home>      (same as <Home>)
-  <S-End>       (same as <End>)
-  <C-Up>        (same as <Up>)
-  <C-Down>      (same as <Down>)
-  <C-Left>      (same as <Left>)
-  <C-Right>     (same as <Right>)
-  <S-Enter>     (same as <Enter>)
-  <C-Enter>     (same as <Enter>)
+  <C-Home>                      (same as <Home>)
+  <S-Home>                      (same as <Home>)
+  <C-S-Home>                    (same as <Home>)
+  <C-End>                       (same as <End>)
+  <S-End>                       (same as <End>)
+  <C-S-End>                     (same as <End>)
+  <C-Up>                        (same as <Up>)
+  <S-Up>                        (same as <Up>)
+  <C-S-Up>                      (same as <Up>)
+  <M-C-Up>                      (same as <Up>)
+  <M-S-Up>                      (same as <Up>)
+  <C-Down>                      (same as <Down>)
+  <S-Down>                      (same as <Down>)
+  <C-S-Down>                    (same as <Down>)
+  <M-Down>                      (same as <Down>)
+  <M-C-Down>                    (same as <Down>)
+  <M-S-Down>                    (same as <Down>)
+  <C-Left>                      (same as <Left>)
+  <S-Left>                      (same as <Left>)
+  <C-S-Left>                    (same as <Left>)
+  <M-C-Left>                    (same as <Left>)
+  <M-S-Left>                    (same as <Left>)
+  <C-Right>                     (same as <Right>)
+  <S-Right>                     (same as <Right>)
+  <C-S-Right>                   (same as <Right>)
+  <M-C-Right>                   (same as <Right>)
+  <M-S-Right>                   (same as <Right>)
+
+  <C-Enter>                     (same as <Enter>)
+  <S-Enter>                     (same as <Enter>)
 
 -------------------------------------------------------------------------------
 3.5   Setup PuTTY                                   *fixkey-term-putty*
@@ -273,20 +347,54 @@ Using PuTTY's configuration menu:
 Leave the Terminal.Keyboard settings at their defaults, and fixkey will
 configure Vim accordingly.
 
+Reserved keys (should work if environment passes them to Vim):
+
+  <M-F4>                        (reserved to close window)
+
 Inoperable keys (terminal sends no codes):
 
-  none
+  <C-Home>
+  <C-S-Home>
+  <M-C-Home>
+  <M-C-S-Home>
+  <C-End>
+  <C-S-End>
+  <M-C-End>
+  <M-C-S-End>
 
 Aliased keys:
 
-  <S-F1>        (same as <F11>)
-  <S-F2>        (same as <F12>)
-  <S-F11>       (same as <F11>)
-  <S-F12>       (same as <F12>)
-  <S-Home>      (same as <Home>)
-  <S-End>       (same as <End>)
-  <S-Enter>     (same as <Enter>)
-  <C-Enter>     (same as <Enter>)
+  <C-F1> - <C-F12>              (same as <F1> - <F12>)
+  <S-F1> - <S-F2>               (same as <F11> - <F12>)
+  <S-F11> - <S-F12>             (same as <F11> - <F12>)
+  <C-S-F1> - <C-S-F12>          (same as <S-F1> - <S-F12>)
+  <M-C-F1> - <M-C-F12>          (same as <M-F1> - <M-F12>)
+  <M-S-F1> - <M-S-F2>           (same as <M-F11> - <M-F12>)
+  <M-S-F11> - <M-S-F12>         (same as <M-F11> - <M-F12>)
+  <M-C-S-F1> - <M-C-S-F12>      (same as <M-S-F1> - <M-S-F12>)
+  <S-Up>                        (same as <C-Up>)
+  <C-S-Up>                      (same as <C-Up>)
+  <M-S-Up>                      (same as <M-C-Up>)
+  <M-C-S-Up>                    (same as <M-C-Up>)
+  <S-Down>                      (same as <C-Down>)
+  <C-S-Down>                    (same as <C-Down>)
+  <M-S-Down>                    (same as <M-C-Down>)
+  <M-C-S-Down>                  (same as <M-C-Down>)
+  <S-Left>                      (same as <C-Left>)
+  <C-S-Left>                    (same as <C-Left>)
+  <M-S-Left>                    (same as <M-C-Left>)
+  <M-C-S-Left>                  (same as <M-C-Left>)
+  <S-Right>                     (same as <C-Right>)
+  <C-S-Right>                   (same as <C-Right>)
+  <M-S-Right>                   (same as <M-C-Right>)
+  <M-C-S-Right>                 (same as <M-C-Right>)
+  <S-Home>                      (same as <Home>)
+  <M-S-Home>                    (same as <M-Home>)
+  <S-End>                       (same as <End>)
+  <M-S-End>                     (same as <M-End>)
+
+  <S-Enter>                     (same as <Enter>)
+  <C-Enter>                     (same as <Enter>)
 
 ```````````````````````````````````````````````````````````````````````````````
 Option 2: Use TERM=putty-sco
@@ -303,17 +411,54 @@ Using PuTTY's configuration menu:
   - "Keyboard"
     - Set "The Function keys and keypad" to "SCO"
 
+Reserved keys (should work if environment passes them to Vim):
+
+  <M-F4>                        (reserved to close window)
+
 Inoperable keys (terminal sends no codes):
 
-  none
+  <C-Home>
+  <C-S-Home>
+  <M-C-Home>
+  <M-C-S-Home>
+  <C-End>
+  <C-S-End>
+  <M-C-End>
+  <M-C-S-End>
+
+Inoperable keys (not enough mappable keys):
+
+  <C-S-F1> - <C-S-F12>
+  <M-C-F1> - <M-C-F12>
+  <M-S-F1> - <M-S-F12>
+  <M-C-S-F1> - <M-C-S-F12>
 
 Aliased keys:
 
-  <Delete>      (same as <Backspace>)
-  <S-Home>      (same as <Home>)
-  <S-End>       (same as <End>)
-  <S-Enter>     (same as <Enter>)
-  <C-Enter>     (same as <Enter>)
+  <Delete>                      (same as <Backspace>)
+  <S-Up>                        (same as <C-Up>)
+  <C-S-Up>                      (same as <C-Up>)
+  <M-S-Up>                      (same as <M-C-Up>)
+  <M-C-S-Up>                    (same as <M-C-Up>)
+  <S-Down>                      (same as <C-Down>)
+  <C-S-Down>                    (same as <C-Down>)
+  <M-S-Down>                    (same as <M-C-Down>)
+  <M-C-S-Down>                  (same as <M-C-Down>)
+  <S-Left>                      (same as <C-Left>)
+  <C-S-Left>                    (same as <C-Left>)
+  <M-S-Left>                    (same as <M-C-Left>)
+  <M-C-S-Left>                  (same as <M-C-Left>)
+  <S-Right>                     (same as <C-Right>)
+  <C-S-Right>                   (same as <C-Right>)
+  <M-S-Right>                   (same as <M-C-Right>)
+  <M-C-S-Right>                 (same as <M-C-Right>)
+  <S-Home>                      (same as <Home>)
+  <M-S-Home>                    (same as <M-Home>)
+  <S-End>                       (same as <End>)
+  <M-S-End>                     (same as <M-End>)
+
+  <S-Enter>                     (same as <Enter>)
+  <C-Enter>                     (same as <Enter>)
 
 -------------------------------------------------------------------------------
 3.6   Setup rxvt                                    *fixkey-term-rxvt*
@@ -321,17 +466,39 @@ Aliased keys:
 There is no additional setup for using rxvt (or rxvt-unicode) when
 TERM=rxvt (or TERM=rxvt-unicode).
 
+Reserved keys (should work if environment passes them to Vim):
+
+  <M-C-F1> - <M-C-F12>          (reserved for switching virtual consoles)
+
 Inoperable keys (terminal sends no codes):
 
-  <S-Home>      (reserved for scrollback for rxvt-unicode only)
-  <S-End>       (reserved for scrollback for rxvt-unicode only)
+  <S-Up>                        (rxvt-unicode only; reserved for scrollback)
+  <S-Down>                      (rxvt-unicode only; reserved for scrollback)
+  <S-Home>                      (rxvt-unicode only; reserved for scrollback)
+  <S-End>                       (rxvt-unicode only; reserved for scrollback)
+
+Inoperable keys (not enough mappable keys):
+
+  <C-S-F1> - <C-S-F12>
+  <M-S-F1> - <M-S-F12>
+  <M-C-S-F1> - <M-C-S-F12>
+  <M-C-S-Home>, <M-C-S-End>
 
 Aliased keys:
 
-  <S-F1>        (same as <F11>)
-  <S-F2>        (same as <F12>)
-  <S-Enter>     (same as <Enter>)
-  <C-Enter>     (same as <Enter>)
+  <S-F1>                        (same as <F11>)
+  <S-F2>                        (same as <F12>)
+  <C-S-Up>                      (same as <S-Up>)
+  <C-S-Down>                    (same as <S-Down>)
+  <C-S-Left>                    (same as <S-Left>)
+  <C-S-Right>                   (same as <S-Right>)
+  <M-C-S-Up>                    (same as <M-S-Up>)
+  <M-C-S-Down>                  (same as <M-S-Down>)
+  <M-C-S-Left>                  (same as <M-S-Left>)
+  <M-C-S-Right>                 (same as <M-S-Right>)
+
+  <S-Enter>                     (same as <Enter>)
+  <C-Enter>                     (same as <Enter>)
 
 -------------------------------------------------------------------------------
 3.7   Setup screen                                  *fixkey-term-screen*
@@ -347,6 +514,10 @@ E.g., TERM=screen, TERM=screen-bce, TERM=screen-256color-bce-s
 The "-###color" variants have additional color support.
 The "-bce" variants use the Background Color Erase (BCE) feature.
 The "-s" variants support a status line.
+
+Reserved keys (should work if environment passes them to Vim):
+
+  <M-C-F1> - <M-C-F12>          (reserved for switching virtual consoles)
 
 Inoperable keys (terminal sends no codes):
 
@@ -382,13 +553,17 @@ In addition, to enable shifted function keys, place the following setting in
 
   set -g xterm-keys on
 
+Reserved keys (should work if environment passes them to Vim):
+
+  <M-C-F1> - <M-C-F12>          (reserved for switching virtual consoles)
+
 Inoperable keys (terminal sends no codes):
 
   none
 
 Aliased keys:
 
-  <C-Enter>     (same as <Enter>)
+  <C-Enter>                     (same as <Enter>)
 
 Note that support for <M-Enter> and <S-Enter> requires using Konsole as the
 host terminal at present.
@@ -476,7 +651,7 @@ third turns keypad transmit mode back off: >
 
   tput smkx; cat > /dev/null; tput rmkx
 
-Terminate testing by pressing CTRL-d.  
+Terminate testing by pressing CTRL-d.
 
 If your terminal gets stuck in a strange mode, issue "reset" at the shell
 prompt to restore proper operation.
@@ -530,6 +705,63 @@ Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 
 - X resources (Arch Linux wiki):
   https://wiki.archlinux.org/index.php/X_resources
+
+-------------------------------------------------------------------------------
+xterm notes
+
+Vim's help documents xterm function keys here: |xterm-function-keys|
+Two keycodes might be sent, either vt100-compatible or not.  The Vim help
+documents that <xF1> - <xF4> are used for the vt100-compatible keycodes:
+
+  <xF1>   <Esc>OP
+  <xF2>   <Esc>OQ
+  <xF3>   <Esc>OR
+  <xF4>   <Esc>OS
+
+The actual built-in defaults for these codes use the "*" wildcard form for
+modifiers that is documented here: |xterm-modifier-keys|
+
+  <xF1>   <Esc>O*P
+  <xF2>   <Esc>O*Q
+  <xF3>   <Esc>O*R
+  <xF4>   <Esc>O*S
+
+xterm does send these vt100-compatible codes for these keys when no modifiers
+are pressed.
+
+Vim's built-in defaults differ from what modern xterm sends for these keys
+when a modifier is pressed. The Vim defaults are:
+
+  <F1>    <Esc>[11;*
+  <F2>    <Esc>[12;*
+  <F3>    <Esc>[13;*
+  <F4>    <Esc>[14;*
+
+xterm actually sends the following:
+
+  <F1>    <Esc>[1;*P
+  <F2>    <Esc>[1;*R
+  <F3>    <Esc>[1;*S
+  <F4>    <Esc>[1;*T
+
+-------------------------------------------------------------------------------
+gnome-terminal notes
+
+gnome-terminal sends vt100-compatible codes for unmodified <xF1> through
+<xF4>:
+
+  <xF1>   <Esc>OP
+  <xF2>   <Esc>OQ
+  <xF3>   <Esc>OR
+  <xF4>   <Esc>OS
+
+With modifiers, gnome-terminal sends different codes than xterm.  Where xterm
+would send "[", gnome-terminal sends "O":
+
+  <F1>    <Esc>O1;*P
+  <F2>    <Esc>O1;*Q
+  <F3>    <Esc>O1;*R
+  <F4>    <Esc>O1;*S
 
 ===============================================================================
 5.  Credits                                         *fixkey-credits*
