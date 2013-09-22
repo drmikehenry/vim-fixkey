@@ -225,6 +225,16 @@ Using Konsole 2.10.5 (from Fedora 19) as an example:
 - Making sure that "xterm-compatible" is selected, choose "OK" to save the
   profile to use these bindings in the future.
 
+- Optionally, disable any Konsole shortcuts that you'd like Vim to see
+  (e.g., <F1>, which is normally bound to "What's This?):
+
+  - Via the menu, visit Settings | Configure Shortcuts.
+
+  - For each bound key you'd like to release, choose Custom | None to disable
+    the shortcut.
+
+  - Choose OK to save your settings.
+
 - Restart all Konsole instances.
 
 With these changes, Konsole will be xterm-compatible, both for Vim and for
