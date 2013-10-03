@@ -4,7 +4,7 @@
 
 " Source this at invocation, then press keys to see what's mapped:
 "
-"   vim '+runtime bundle/vim-fixkey/scripts/fixkeytest.vim'
+"   vim '+runtime bundle/fixkey/scripts/fixkeytest.vim'
 
 function! MapTestKey(key)
     execute "map  <" . a:key . "> :echo '" . a:key . "'<CR>"

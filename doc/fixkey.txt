@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.3.1
+*fixkey*      Version 0.3.2
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -14,8 +14,9 @@
 3.7   Setup screen                                  |fixkey-term-screen|
 3.8   Setup tmux                                    |fixkey-term-tmux|
 3.9   Terminal testing                              |fixkey-term-testing|
-4.  References                                      |fixkey-references|
-5.  Credits                                         |fixkey-credits|
+4.  ChangeLog                                       |fixkey-changelog|
+5.  References                                      |fixkey-references|
+6.  Credits                                         |fixkey-credits|
 
 ==============================================================================
 1.  Introduction                                    *fixkey-intro*
@@ -43,7 +44,7 @@ Then, re-generate your help tags with Vim's |:helptags| command, e.g.: >
 You may also install fixkey using a tool like pathogen[1] by unpacking
 the downloaded archive into a bundle directory, e.g.: >
 
-  ~/.vim/bundle/vim-fixkey
+  ~/.vim/bundle/fixkey
 
 [1]: https://github.com/tpope/vim-pathogen
 
@@ -687,7 +688,37 @@ Using just "xxd" shows the sequence when not in keypad transmit mode: >
 Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 
 ===============================================================================
-4.  References                                      *fixkey-references*
+4.  ChangeLog                                       *fixkey-changelog*
+
+Version 0.3.2    Date    2013-10-03                 *fixkey-changelog-0.3.2*
+
+  - Documentation reorganization.
+
+Version 0.3.1    Date    2013-09-23                 *fixkey-changelog-0.3.1*
+
+  - Restore cpoptions correctly.
+
+Version 0.3.0    Date    2013-08-25                 *fixkey-changelog-0.3.0*
+
+  - Add support for more modifier keys.  Now all combinations of Shift,
+    Control, and Meta work with function keys, arrows, and home/end (on
+    supported terminals).
+
+Version 0.2.3    Date    2013-08-20                 *fixkey-changelog-0.2.3*
+
+  - Add support for -bce and -s subvariants of screen (e.g.,
+    TERM=screen-256color-bce-s will now work).
+
+Version 0.2.2    Date    2013-08-18                 *fixkey-changelog-0.2.2*
+
+  - Add support for <M-Enter>, <S-Enter> for some terminals.
+
+Version 0.2.1    Date    2013-08-15                 *fixkey-changelog-0.2.1*
+
+  - Initial upload.
+
+===============================================================================
+5.  References                                      *fixkey-references*
 
 - "Mapping fast keycodes in terminal Vim":
   http://vim.wikia.com/wiki/Mapping_fast_keycodes_in_terminal_Vim
@@ -774,7 +805,7 @@ would send "[", gnome-terminal sends "O":
   <F4>    <Esc>O1;*S
 
 ===============================================================================
-5.  Credits                                         *fixkey-credits*
+6.  Credits                                         *fixkey-credits*
 
 Developed by Michael Henry (vim at drmikehenry.com).
 
