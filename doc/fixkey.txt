@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.3.2
+*fixkey*      Version 0.3.3
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -689,6 +689,10 @@ Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 
 ===============================================================================
 4.  ChangeLog                                       *fixkey-changelog*
+
+Version 0.3.3    Date    2014-05-17                 *fixkey-changelog-0.3.3*
+
+  - Add support for overlooked PuTTY-SCO keys <F1> to <F12>.
 
 Version 0.3.2    Date    2013-10-03                 *fixkey-changelog-0.3.2*
 

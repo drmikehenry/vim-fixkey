@@ -309,6 +309,21 @@ function! Fixkey_setPuttyKeys()
     call Fixkey_setKey("<M-Enter>", "\e\r")
 endfunction
 
+function! Fixkey_setPuttyScoF1toF12()
+    call Fixkey_setKey("<F1>",  "\e[M")
+    call Fixkey_setKey("<F2>",  "\e[N")
+    call Fixkey_setKey("<F3>",  "\e[O")
+    call Fixkey_setKey("<F4>",  "\e[P")
+    call Fixkey_setKey("<F5>",  "\e[Q")
+    call Fixkey_setKey("<F6>",  "\e[R")
+    call Fixkey_setKey("<F7>",  "\e[S")
+    call Fixkey_setKey("<F8>",  "\e[T")
+    call Fixkey_setKey("<F9>",  "\e[U")
+    call Fixkey_setKey("<F10>", "\e[V")
+    call Fixkey_setKey("<F11>", "\e[W")
+    call Fixkey_setKey("<F12>", "\e[X")
+endfunction
+
 function! Fixkey_setPuttyScoShiftF1toF12()
     call Fixkey_setNewKey("<S-F1>",  "\e[Y")
     call Fixkey_setNewKey("<S-F2>",  "\e[Z")
@@ -378,6 +393,7 @@ function! Fixkey_setPuttyScoKeys()
     let g:Fixkey_termType = "putty-sco"
     call Fixkey_unsetFunctionKeys()
     call Fixkey_setMetaLetters()
+    call Fixkey_setPuttyScoF1toF12()
     call Fixkey_setPuttyScoShiftF1toF12()
     call Fixkey_setPuttyScoCtrlF1toF12()
     " Not working yet (seems like too many "setNewKey" calls):
