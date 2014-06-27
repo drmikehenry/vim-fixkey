@@ -18,7 +18,7 @@ set cpoptions&vim
 
 " Ensure keycode timeouts are enabled.
 if &ttimeoutlen < 0
-    set ttimeoutlen=50
+    set ttimeoutlen=5
 endif
 
 function! Fixkey_setKey(key, keyCode)

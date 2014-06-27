@@ -27,6 +27,11 @@ Now, console Vim users can map keys like Gvim users, e.g.::
 See documentation in doc/fixkey.txt for installation instructions and
 terminal setup.
 
+**NOTE** Unexpected results may occur when using macros with fixkey, because
+macros do not maintain the original timings between key codes, causing Vim's
+timing-based algorithms to become confused.  See the documentation for more
+details.
+
 Developed by Michael Henry (vim at drmikehenry.com).
 
 Distributed under Vim's license.
