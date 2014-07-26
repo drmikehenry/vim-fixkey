@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.3.4
+*fixkey*      Version 0.3.5
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -568,11 +568,13 @@ There is no additional setup for using screen.
 Supported TERM values: >
 
   screen [-###color]? [-bce]? [-s]?
+  screen [-###color|-bce|-it|-s]*
 
-E.g., TERM=screen, TERM=screen-bce, TERM=screen-256color-bce-s
+E.g., TERM=screen, TERM=screen-bce, TERM=screen-256color-bce-s, TERM=screen-bce
 
 The "-###color" variants have additional color support.
 The "-bce" variants use the Background Color Erase (BCE) feature.
+The "-it" variants support italics.
 The "-s" variants support a status line.
 
 Reserved keys (should work if environment passes them to Vim):
@@ -739,6 +741,11 @@ Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 ===============================================================================
 4.  ChangeLog                                       *fixkey-changelog*
 
+Version 0.3.5    Date    2014-07-26                 *fixkey-changelog-0.3.5*
+
+  - Add support for -it subvariants of screen (e.g.,
+    TERM=screen-256color-it will now work), thanks to Kevin MacMartin.
+
 Version 0.3.4    Date    2014-06-26                 *fixkey-changelog-0.3.4*
 
   - Change 'ttimelen' to 5 milliseconds to avoid incorrect keystroke
@@ -756,7 +763,7 @@ Version 0.3.2    Date    2013-10-03                 *fixkey-changelog-0.3.2*
 
 Version 0.3.1    Date    2013-09-23                 *fixkey-changelog-0.3.1*
 
-  - Restore cpoptions correctly.
+  - Restore cpoptions correctly, thanks to blackheaven.
 
 Version 0.3.0    Date    2013-08-25                 *fixkey-changelog-0.3.0*
 
@@ -767,7 +774,7 @@ Version 0.3.0    Date    2013-08-25                 *fixkey-changelog-0.3.0*
 Version 0.2.3    Date    2013-08-20                 *fixkey-changelog-0.2.3*
 
   - Add support for -bce and -s subvariants of screen (e.g.,
-    TERM=screen-256color-bce-s will now work).
+    TERM=screen-256color-bce-s will now work), thanks to AguirreIF.
 
 Version 0.2.2    Date    2013-08-18                 *fixkey-changelog-0.2.2*
 
@@ -872,6 +879,12 @@ Developed by Michael Henry (vim at drmikehenry.com).
 Distributed under Vim's |license|.
 
 Git repository:       https://github.com/drmikehenry/vim-fixkey
+
+Contributors (in chronological order):
+
+- AguirreIF
+- blackheaven
+- Kevin MacMartin
 
 ===============================================================================
 vim:sts=2:et:ai:tw=78:fo=tcq2:ft=help:

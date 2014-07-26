@@ -583,7 +583,7 @@ elseif $TERM =~# '^putty\(-\d*color\)\?$'
 elseif $TERM =~# '^rxvt\(-unicode\)\?\(-\d*color\)\?$'
     call Fixkey_setRxvtKeys()
 
-elseif $TERM =~# '^screen\(-\d*color\)\?\(-bce\|-it\)\?\(-s\)\?$'
+elseif $TERM =~# '\v^screen(-\d*color|-bce|-it|-s)*$'
     call Fixkey_setScreenKeys()
 
 else
