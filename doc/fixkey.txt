@@ -570,7 +570,7 @@ Supported TERM values: >
   screen [-###color]? [-bce]? [-s]?
   screen [-###color|-bce|-it|-s]*
 
-E.g., TERM=screen, TERM=screen-bce, TERM=screen-256color-bce-s, TERM=screen-bce
+E.g., TERM=screen, TERM=screen-bce, TERM=screen-256color-bce-s, TERM=screen-it
 
 The "-###color" variants have additional color support.
 The "-bce" variants use the Background Color Erase (BCE) feature.
