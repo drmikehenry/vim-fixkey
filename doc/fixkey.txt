@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.3.5
+*fixkey*      Version 0.3.6
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -595,13 +595,36 @@ host terminal at present.
 -------------------------------------------------------------------------------
 3.8   Setup tmux                                    *fixkey-term-tmux*
 
-Tmux shares terminal names with screen, so fixkey treats them the same.
-See "Setup screen" section above for more details.
+Tmux commonly shares terminal names with screen, in which case fixkey treats
+them the same; see the "Setup screen" section for supported terminal names
+starting with "screen".
+
+In versions prior to 2.1, tmux required TERM to start with "screen"; starting
+with version 2.1, users may choose terminal names beginning with "tmux" instead
+(e.g., "tmux", "tmux-256color", etc.).  This is useful for enabling italics
+under tmux.  Fixkey will detect such names and configure the keys the same as if
+TERM were "screen".  To change the default value for TERM to "tmux", add the
+following to your ~/.tmux.conf file: >
+
+  set-option -g default-terminal tmux
+<
+Supported tmux-specific TERM values: >
+
+  tmux [-###color]? [-bce]? [-s]?
+  tmux [-###color|-bce|-it|-s]*
+
+E.g., TERM=tmux, TERM=tmux-bce, TERM=tmux-256color-bce-s, TERM=tmux-it
+
+The "-###color" variants have additional color support.
+The "-bce" variants use the Background Color Erase (BCE) feature.
+The "-it" variants support italics.
+The "-s" variants support a status line.
 
 In your ~/.tmux.conf, do not set default-terminal to something that doesn't
-start with "screen"; instead, either allow tmux to set it properly, or choose
-a value like "screen-256color-bce" that is meant for screen.  Otherwise,
-things won't work properly according to the tmux FAQ, which says: >
+start with "screen" (or with "tmux", assuming you have a properly configured
+termcap entry); instead, either allow tmux to set it properly, or choose a
+supported value like "screen-256color-bce" or "tmux-it".  Otherwise, things
+won't work properly according to the tmux FAQ, which says: >
 
   PLEASE NOTE: most display problems are due to incorrect TERM! Before
   reporting problems make SURE that TERM settings are correct inside and
@@ -609,12 +632,20 @@ things won't work properly according to the tmux FAQ, which says: >
 
   Inside tmux TERM must be "screen" or similar (such as "screen-256color").
   Don't bother reporting problems where it isn't!
-
+<
 In addition, to enable shifted function keys, place the following setting in
 ~/.tmux.conf: >
 
   set -g xterm-keys on
 
+You may find key code errors when pressing Escape followed by another key in
+rapid succession.  This is due to the same decoding ambiguities mentioned in
+|fixkey-intro|.  To work around this problem, you may change "escape-time" in
+in your ~/.tmux.conf file to something short; the author uses 5 milliseconds in
+his configuration: >
+
+  set-option -s escape-time 5
+<
 Reserved keys (should work if environment passes them to Vim):
 
   <M-C-F1> - <M-C-F12>          (reserved for switching virtual consoles)
@@ -885,6 +916,7 @@ Contributors (in chronological order):
 - AguirreIF
 - blackheaven
 - Kevin MacMartin
+- Andy Weidenbaum
 
 ===============================================================================
 vim:sts=2:et:ai:tw=78:fo=tcq2:ft=help:

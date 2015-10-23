@@ -545,8 +545,7 @@ function! Fixkey_setScreenExtraHomeEnd()
     call Fixkey_setKey("<xEnd>", "\e[4~")
 endfunction
 
-function! Fixkey_setScreenKeys()
-    let g:Fixkey_termType = "screen"
+function! Fixkey_setScreenCompatibleKeys()
     call Fixkey_setMetaLetters()
     call Fixkey_setXtermFunctionKeys()
     call Fixkey_setXtermHomeEnd()
@@ -556,6 +555,16 @@ function! Fixkey_setScreenKeys()
     call Fixkey_setKey("<M-Enter>", "\e\r")
     " <S-Enter> works when hosted under konsole.
     call Fixkey_setNewKey("<S-Enter>", "\eOM")
+endfunction
+
+function! Fixkey_setScreenKeys()
+    let g:Fixkey_termType = "screen"
+    call Fixkey_setScreenCompatibleKeys()
+endfunction
+
+function! Fixkey_setTmuxKeys()
+    let g:Fixkey_termType = "tmux"
+    call Fixkey_setScreenCompatibleKeys()
 endfunction
 
 if $TERM =~# '^xterm\(-\d*color\)\?$'
@@ -585,6 +594,9 @@ elseif $TERM =~# '^rxvt\(-unicode\)\?\(-\d*color\)\?$'
 
 elseif $TERM =~# '\v^screen(-\d*color|-bce|-it|-s)*$'
     call Fixkey_setScreenKeys()
+
+elseif $TERM =~# '\v^tmux(-\d*color|-bce|-it|-s)*$'
+    call Fixkey_setTmuxKeys()
 
 else
     let g:Fixkey_termType = "unknown"
