@@ -102,35 +102,18 @@ function! Fixkey_unsetFunctionKeys()
     endwhile
 endfunction
 
-function! Fixkey_setVt100ExtraF1toF4()
-    call Fixkey_setKey("<xF1>", "\eO*P")
-    call Fixkey_setKey("<xF2>", "\eO*Q")
-    call Fixkey_setKey("<xF3>", "\eO*R")
-    call Fixkey_setKey("<xF4>", "\eO*S")
-endfunction
-
-function! Fixkey_setVt100ExtraHomeEnd()
-    call Fixkey_setKey("<xHome>", "\eO*H")
-    call Fixkey_setKey("<xEnd>",  "\eO*F")
-endfunction
-
-function! Fixkey_setVt100ExtraArrows()
-    " Oddly, Vim sets <Up> to \eO*A and <xUp> to \e[1;*A, which seems
-    " backward compared to <F1>=\e[1;*P and <xF1>=\eO*P.  This seems
-    " to cause trouble with Konsole's use of these arrow keys.  Switching
-    " to the vt100-compatible keycodes on <xArrows> allows Konsole
-    " to use these codes directly.
-    call Fixkey_setKey("<xUp>",    "\eO*A")
-    call Fixkey_setKey("<xDown>",  "\eO*B")
-    call Fixkey_setKey("<xLeft>",  "\eO*D")
-    call Fixkey_setKey("<xRight>", "\eO*C")
-endfunction
-
 function! Fixkey_setXtermF1toF4()
     call Fixkey_setKey("<F1>", "\e[1;*P")
     call Fixkey_setKey("<F2>", "\e[1;*Q")
     call Fixkey_setKey("<F3>", "\e[1;*R")
     call Fixkey_setKey("<F4>", "\e[1;*S")
+endfunction
+
+function! Fixkey_setVt100ExtraF1toF4()
+    call Fixkey_setKey("<xF1>", "\eO*P")
+    call Fixkey_setKey("<xF2>", "\eO*Q")
+    call Fixkey_setKey("<xF3>", "\eO*R")
+    call Fixkey_setKey("<xF4>", "\eO*S")
 endfunction
 
 function! Fixkey_setXtermFunctionKeys()
@@ -146,6 +129,16 @@ function! Fixkey_setXtermFunctionKeys()
     call Fixkey_setKey("<F12>", "\e[24;*~")
 endfunction
 
+function! Fixkey_setXtermHomeEnd()
+    call Fixkey_setKey("<Home>",  "\e[1;*H")
+    call Fixkey_setKey("<End>",   "\e[1;*F")
+endfunction
+
+function! Fixkey_setVt100ExtraHomeEnd()
+    call Fixkey_setKey("<xHome>", "\eO*H")
+    call Fixkey_setKey("<xEnd>",  "\eO*F")
+endfunction
+
 function! Fixkey_setXtermArrows()
     call Fixkey_setKey("<Up>",     "\e[1;*A")
     call Fixkey_setKey("<Down>",   "\e[1;*B")
@@ -153,9 +146,16 @@ function! Fixkey_setXtermArrows()
     call Fixkey_setKey("<Right>",  "\e[1;*C")
 endfunction
 
-function! Fixkey_setXtermHomeEnd()
-    call Fixkey_setKey("<Home>",  "\e[1;*H")
-    call Fixkey_setKey("<End>",   "\e[1;*F")
+function! Fixkey_setVt100ExtraArrows()
+    " Oddly, Vim sets <Up> to \eO*A and <xUp> to \e[1;*A, which seems
+    " backward compared to <F1>=\e[1;*P and <xF1>=\eO*P.  This seems
+    " to cause trouble with Konsole's use of these arrow keys.  Switching
+    " to the vt100-compatible keycodes on <xArrows> allows Konsole
+    " to use these codes directly.
+    call Fixkey_setKey("<xUp>",    "\eO*A")
+    call Fixkey_setKey("<xDown>",  "\eO*B")
+    call Fixkey_setKey("<xLeft>",  "\eO*D")
+    call Fixkey_setKey("<xRight>", "\eO*C")
 endfunction
 
 function! Fixkey_setXtermKeys()
