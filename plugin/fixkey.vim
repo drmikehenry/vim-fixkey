@@ -158,24 +158,30 @@ function! Fixkey_setVt100ExtraArrows()
     call Fixkey_setKey("<xRight>", "\eO*C")
 endfunction
 
+function! Fixkey_setXtermNavigationKeys()
+    call Fixkey_setXtermHomeEnd()
+    call Fixkey_setVt100ExtraHomeEnd()
+    call Fixkey_setXtermArrows()
+    call Fixkey_setVt100ExtraArrows()
+endfunction
+
 function! Fixkey_setXtermKeys()
     let g:Fixkey_termType = "xterm"
     call Fixkey_setMetaLetters()
-    call Fixkey_setXtermF1toF4()
+    call Fixkey_setXtermFunctionKeys()
+    call Fixkey_setXtermNavigationKeys()
 
-    " konsole.
+    " In case this is actually konsole:
     call Fixkey_setNewKey("<S-Enter>", "\eOM")
-    " xterm, konsole.
+    " For both xterm and konsole.
     call Fixkey_setKey("<M-Enter>", "\e\r")
 endfunction
 
 function! Fixkey_setGnomeTerminalKeys()
     let g:Fixkey_termType = "gnome"
     call Fixkey_setMetaLetters()
-    call Fixkey_setKey("<F1>", "\eO1;*P")
-    call Fixkey_setKey("<F2>", "\eO1;*Q")
-    call Fixkey_setKey("<F3>", "\eO1;*R")
-    call Fixkey_setKey("<F4>", "\eO1;*S")
+    call Fixkey_setXtermFunctionKeys()
+    call Fixkey_setXtermNavigationKeys()
     " Can't get this to work:
     " call Fixkey_setKey("<M-Enter>", "\e\r")
 endfunction
@@ -184,8 +190,7 @@ function! Fixkey_setKonsoleKeys()
     let g:Fixkey_termType = "konsole"
     call Fixkey_setMetaLetters()
     call Fixkey_setXtermFunctionKeys()
-    call Fixkey_setXtermArrows()
-    call Fixkey_setVt100ExtraArrows()
+    call Fixkey_setXtermNavigationKeys()
     call Fixkey_setNewKey("<S-Enter>", "\eOM")
     call Fixkey_setKey("<M-Enter>", "\e\r")
 endfunction
