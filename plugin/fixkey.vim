@@ -603,6 +603,12 @@ elseif $TERM =~# '\v^screen(-\d*color|-bce|-it|-s)*$'
 elseif $TERM =~# '\v^tmux(-\d*color|-bce|-it|-s)*$'
     call Fixkey_setTmuxKeys()
 
+    " When TERM begins with "screen", Vim helpfully sets 'ttymouse' to "xterm".
+    " This same logic is required for tmux to work correctly, but Vim currently
+    " lacks support for it.  As a work-around for this problem, we ensure
+    " 'ttymouse' is set correctly below.
+    set ttymouse=xterm
+
 else
     let g:Fixkey_termType = "unknown"
 endif

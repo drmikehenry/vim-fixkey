@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.3.7
+*fixkey*      Version 0.3.8
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -604,8 +604,13 @@ In versions prior to 2.1, tmux required TERM to start with "screen"; starting
 with version 2.1, users may choose terminal names beginning with "tmux" instead
 (e.g., "tmux", "tmux-256color", etc.).  This is useful for enabling italics
 under tmux.  Fixkey will detect such names and configure the keys the same as if
-TERM were "screen".  To change the default value for TERM to "tmux", add the
-following to your ~/.tmux.conf file: >
+TERM were "screen".  In addition, Fixkey will set 'ttymouse' to "xterm" as a
+work-around; otherwise, Vim mis-detects the mouse and configures the
+mouse-related codes such that the <Home> and <End> key mappings don't work
+correctly.  It works for "screen" only because Vim has special-case code to set
+'ttymouse' to "xterm" whenever TERM starts with "screen", but Vim lacks that
+same special-case code for "tmux".  To change the default value for TERM to
+"tmux", add the following to your ~/.tmux.conf file: >
 
   set-option -g default-terminal tmux
 <
@@ -772,6 +777,14 @@ Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 
 ===============================================================================
 4.  ChangeLog                                       *fixkey-changelog*
+
+Version 0.3.8    Date    2016-10-04                 *fixkey-changelog-0.3.8*
+
+  - Add work-around for TERM=tmux.  Vim detects TERM=screen and sets 'ttymouse'
+    to the correct value, but has no such logic for TERM=tmux.  Because having
+    an incorrect value for 'ttymouse' causes Vim to use mouse codes that
+    conflict with <Home> and <End>, Fixkey now sets 'ttymouse' to "xterm" when
+    TERM=tmux to work around this issue.
 
 Version 0.3.7    Date    2015-10-22                 *fixkey-changelog-0.3.7*
 
