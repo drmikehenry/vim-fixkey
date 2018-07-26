@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.3.8
+*fixkey*      Version 0.3.9
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -239,6 +239,20 @@ Aliased keys:
 
 -------------------------------------------------------------------------------
 3.3   Setup Konsole                                 *fixkey-term-konsole*
+
+Generally, Konsole works properly out of the box with Vim and Fixkey.  Though
+distributions frequently configure Konsole to masquerade as xterm, the
+differences are limited to the key codes for <S-F1> through <S-F4>.
+Fortunately, in addition to <F1> through <F4>, Vim provides the aliases <xF1>
+through <xF4>.  These aliases allow different key codes for each of these
+function keys such that Fixkey is able to support both xterm and Konsole
+sequences simultaneously; therefore, no configuration of Konsole is strictly
+necessary for use with Vim, but some terminal programs may behave better if one
+of the options below are used to provide a more correct Konsole configuration.
+
+However, there are some keys that are intercepted as explained below (e.g.,
+<S-F1> for Konsole's "What's this?" feature); these keys must be unassigned
+before Vim can use them.
 
 ```````````````````````````````````````````````````````````````````````````````
 Option 1: Configure Konsole to match xterm.
