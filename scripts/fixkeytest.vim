@@ -29,7 +29,15 @@ endfunction
 let c = 'a'
 while c <= 'z'
     call MapTestKey("M-" . c)
-    call MapTestKey("M-" . toupper(c))
+    if c != 'o'
+        call MapTestKey("M-" . toupper(c))
+    endif
+    let c = nr2char(char2nr(c) + 1)
+endwhile
+
+let c = '0'
+while c <= '9'
+    call MapTestKey("M-" . c)
     let c = nr2char(char2nr(c) + 1)
 endwhile
 

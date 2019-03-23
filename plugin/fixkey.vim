@@ -65,13 +65,21 @@ function! Fixkey_setMetaNumbers()
     endwhile
 endfunction
 
+function! Fixkey_resetMetaNumbers()
+    let c = '0'
+    while c <= '9'
+        call Fixkey_setKey("<M-" .  c . ">", nr2char(char2nr(c)  + 0x80))
+        let c = nr2char(char2nr(c) + 1)
+    endwhile
+endfunction
+
 function! Fixkey_setMetaLetters()
     let c = 'a'
     while c <= 'z'
         let uc = toupper(c)
         call Fixkey_setKey("<M-" .  c . ">", "\e" . c)
         " Since many keycodes have "\eO" in them, we can't use "\eO" for <M-O>.
-        if uc != "O"
+        if uc != 'O'
             call Fixkey_setKey("<M-" . uc . ">", "\e" . uc)
         endif
         let c = nr2char(char2nr(c) + 1)
@@ -83,7 +91,9 @@ function! Fixkey_resetMetaLetters()
     while c <= 'z'
         let uc = toupper(c)
         call Fixkey_setKey("<M-" .  c . ">", nr2char(char2nr(c)  + 0x80))
-        call Fixkey_setKey("<M-" . uc . ">", nr2char(char2nr(uc) + 0x80))
+        if uc != 'O'
+            call Fixkey_setKey("<M-" . uc . ">", nr2char(char2nr(uc) + 0x80))
+        endif
         let c = nr2char(char2nr(c) + 1)
     endwhile
 endfunction
@@ -613,7 +623,7 @@ elseif $TERM =~# '^putty\(-\d*color\)\?$'
 elseif $TERM =~# '^rxvt\(-unicode\)\?\(-\d*color\)\?$'
     call Fixkey_setRxvtKeys()
 
-elseif $TERM =~# '\v^screen(-\d*color|-bce|-it|-s)*$'
+elseif $TERM =~# '\v^screen([-.].*)?$'
     call Fixkey_setScreenKeys()
 
 elseif $TERM =~# '\v^tmux(-\d*color|-bce|-it|-s)*$'
