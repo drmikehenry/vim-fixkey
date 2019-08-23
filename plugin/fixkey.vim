@@ -2,7 +2,9 @@
 
 " Distributed under Vim's |license|; see |fixkey.txt| for details.
 
-if exists("loaded_fixkey")
+" Neovim does not require Fixkey.  If Neovim is detected, quietly bail out
+" to smooth the user experience for users that switch between Vim and Neovim.
+if exists("loaded_fixkey") || has('nvim')
     finish
 endif
 let loaded_fixkey = 1
@@ -15,11 +17,6 @@ endif
 " Save 'cpoptions' and set Vim default to enable line continuations.
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
-
-" Ensure keycode timeouts are enabled.
-if &ttimeoutlen < 0
-    set ttimeoutlen=5
-endif
 
 function! Fixkey_setKey(key, keyCode)
     execute "set " . a:key . "=" . a:keyCode
@@ -598,45 +595,73 @@ function! Fixkey_setTmuxKeys()
     call Fixkey_setScreenCompatibleKeys()
 endfunction
 
-if $TERM =~# '^xterm\(-\d*color\)\?$'
-    if $COLORTERM == "gnome-terminal"
-        call Fixkey_setGnomeTerminalKeys()
-    else
-        call Fixkey_setXtermKeys()
+function! Fixkey_setup()
+    " Ensure keycode timeouts are enabled.
+    if &ttimeoutlen < 0
+        set ttimeoutlen=5
     endif
 
-elseif $TERM =~# '^gnome\(-\d*color\)\?$'
-     call Fixkey_setGnomeTerminalKeys()
+    if $TERM =~# '^xterm\(-\d*color\)\?$'
+        if $COLORTERM == "gnome-terminal"
+            call Fixkey_setGnomeTerminalKeys()
+        else
+            call Fixkey_setXtermKeys()
+        endif
 
-elseif $TERM =~# '^konsole\(-\d*color\)\?$'
-    call Fixkey_setKonsoleKeys()
+    elseif $TERM =~# '^gnome\(-\d*color\)\?$'
+         call Fixkey_setGnomeTerminalKeys()
 
-elseif $TERM == 'linux'
-    call Fixkey_setLinuxKeys()
+    elseif $TERM =~# '^konsole\(-\d*color\)\?$'
+        call Fixkey_setKonsoleKeys()
 
-elseif $TERM == 'putty-sco'
-    call Fixkey_setPuttyScoKeys()
+    elseif $TERM == 'linux'
+        call Fixkey_setLinuxKeys()
 
-elseif $TERM =~# '^putty\(-\d*color\)\?$'
-    call Fixkey_setPuttyKeys()
+    elseif $TERM == 'putty-sco'
+        call Fixkey_setPuttyScoKeys()
 
-elseif $TERM =~# '^rxvt\(-unicode\)\?\(-\d*color\)\?$'
-    call Fixkey_setRxvtKeys()
+    elseif $TERM =~# '^putty\(-\d*color\)\?$'
+        call Fixkey_setPuttyKeys()
 
-elseif $TERM =~# '\v^screen([-.].*)?$'
-    call Fixkey_setScreenKeys()
+    elseif $TERM =~# '^rxvt\(-unicode\)\?\(-\d*color\)\?$'
+        call Fixkey_setRxvtKeys()
 
-elseif $TERM =~# '\v^tmux(-\d*color|-bce|-it|-s)*$'
-    call Fixkey_setTmuxKeys()
+    elseif $TERM =~# '\v^screen([-.].*)?$'
+        call Fixkey_setScreenKeys()
 
-    " When TERM begins with "screen", Vim helpfully sets 'ttymouse' to "xterm".
-    " This same logic is required for tmux to work correctly, but Vim currently
-    " lacks support for it.  As a work-around for this problem, we ensure
-    " 'ttymouse' is set correctly below.
-    set ttymouse=xterm
+    elseif $TERM =~# '\v^tmux(-\d*color|-bce|-it|-s)*$'
+        call Fixkey_setTmuxKeys()
+
+        " When TERM begins with "screen", Vim helpfully sets 'ttymouse' to
+        " "xterm".  This same logic is required for tmux to work correctly, but
+        " Vim currently lacks support for it.  As a work-around for this
+        " problem, we ensure 'ttymouse' is set correctly below.
+        set ttymouse=xterm
+
+    else
+        let g:Fixkey_termType = "unknown"
+    endif
+endfunction
+
+if !exists("g:Fixkey_setupDelay")
+    let g:Fixkey_setupDelay = 100
+endif
+
+if g:Fixkey_setupDelay == 0
+    call Fixkey_setup()
+
+elseif exists('*timer_start') && g:Fixkey_setupDelay > 0
+    function! Fixkey_setupCallback(timerId)
+        call Fixkey_setup()
+    endfunction
+    call timer_start(g:Fixkey_setupDelay, 'Fixkey_setupCallback')
 
 else
-    let g:Fixkey_termType = "unknown"
+    augroup Fixkey
+        autocmd!
+        autocmd TermResponse * call Fixkey_setup()
+    augroup END
+
 endif
 
 " Restore saved 'cpoptions'.
