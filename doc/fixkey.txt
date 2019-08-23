@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.3.10
+*fixkey*      Version 0.3.11
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -14,9 +14,10 @@
 3.7   Setup screen                                  |fixkey-term-screen|
 3.8   Setup tmux                                    |fixkey-term-tmux|
 3.9   Terminal testing                              |fixkey-term-testing|
-4.  ChangeLog                                       |fixkey-changelog|
-5.  References                                      |fixkey-references|
-6.  Credits                                         |fixkey-credits|
+4.  Configuration                                   |fixkey-configuration|
+5.  ChangeLog                                       |fixkey-changelog|
+6.  References                                      |fixkey-references|
+7.  Credits                                         |fixkey-credits|
 
 ==============================================================================
 1.  Introduction                                    *fixkey-intro*
@@ -97,6 +98,11 @@ the downloaded archive into a bundle directory, e.g.: >
 
 [1]: https://github.com/tpope/vim-pathogen
 
+Note that Fixkey's features are not required on Neovim, as that editor already
+supports mapping Alt-keys natively.  To avoid interfering with proper Neovim
+operation, Fixkey skips its initialization on that editor as a convenience to
+users that share configuration files between Vim and Neovim.
+
 ===============================================================================
 3.  Terminal Setup                                  *fixkey-term-setup*
 
@@ -170,6 +176,13 @@ Inoperable keys (terminal sends no codes):
 Aliased keys:
 
   <C-Enter>                     (same as <Enter>)
+
+Weird behavior at startup:
+
+  If Vim exhibits any weird behavior at startup, it might be caused by the
+  negotiations Vim performs when it detects a new-enough version of Xterm.
+  Fixkey tries to work around these problems by default.  See
+  |g:Fixkey_setupDelay| in the configuration section below for details.
 
 -------------------------------------------------------------------------------
 3.2   Setup gnome-terminal                          *fixkey-term-gnome*
@@ -792,14 +805,55 @@ Using just "xxd" shows the sequence when not in keypad transmit mode: >
 Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 
 ===============================================================================
-4.  ChangeLog                                       *fixkey-changelog*
+4.  Configuration                                   *fixkey-configuration*
+
+*g:Fixkey_setupDelay*     integer (milliseconds); default 10
+
+  At startup, Vim queries the terminal for its version number (see |t_RV|
+  and |v:termresponse|).  The response is received asynchronously while Vim
+  continues to initialize plugins.  For Xterm with patchlevel 141 or higher,
+  Vim further queries the terminal's key codes directly (see |xterm-codes|).
+  If Fixkey has already performed its setup, Vim can misinterpret these
+  terminal negotiations as keystrokes, causing misbehavior.  To work around
+  this, Fixkey attempts to delay its setup based on the value of
+  g:Fixkey_setupDelay, an integer representing the number of milliseconds to
+  delay.  There are three cases:
+
+    g:Fixkey_setupDelay     behavior
+    -------------------     --------
+    0                       Perform setup immediately
+    positive                Delay setup by this number of milliseconds
+    negative                Delay until the |TermReponse| autocmd fires
+
+  Support for timers was added in Vim 7.4.1578.  If no timer support is found,
+  Fixkey falls back to waiting for the |TermResponse| autocmd.
+
+  See https://github.com/drmikehenry/vim-fixkey/issues/11 for more
+  information.
+
+===============================================================================
+5.  ChangeLog                                       *fixkey-changelog*
+
+Version 0.3.11   Date    2019-08-25                 *fixkey-changelog-0.3.11*
+
+  - Delay Fixkey setup at startup to avoid interfering with Vim's terminal
+    negotiations.  This works around issues with newer Xterm versions (see
+    https://github.com/drmikehenry/vim-fixkey/issues/11).  Startup delay is
+    controlled via |g:Fixkey_setupDelay|.
+
+  - Silently skip Fixkey setup when running with Neovim.  Fixkey's features
+    are not required on Neovim, as that editor already supports mapping
+    Alt-keys natively.  As a convenience to users that share configuration
+    files between Vim and Neovim, Fixkey skips its initialization when Neovim
+    is detected.
 
 Version 0.3.10   Date    2019-03-23                 *fixkey-changelog-0.3.10*
 
   - Support Alt-numbers (<M-0> - <M-9>), thanks to Ralf Vogler.
 
   - Because GNU screen now defaults TERM to be "screen.$TERM" (based on the
-    incoming value of TERM), the supported TERM values for screen have been loosened to `screen` and anything beginning with `screen.` or `screen-`.
+    incoming value of TERM), the supported TERM values for screen have been
+    loosened to `screen` and anything beginning with `screen.` or `screen-`.
 
 Version 0.3.9    Date    2018-07-27                 *fixkey-changelog-0.3.9*
 
@@ -868,7 +922,7 @@ Version 0.2.1    Date    2013-08-15                 *fixkey-changelog-0.2.1*
   - Initial upload.
 
 ===============================================================================
-5.  References                                      *fixkey-references*
+6.  References                                      *fixkey-references*
 
 - "Mapping fast keycodes in terminal Vim":
   http://vim.wikia.com/wiki/Mapping_fast_keycodes_in_terminal_Vim
@@ -980,7 +1034,7 @@ would send "[", gnome-terminal sends "O":
 Fortunately, both cases are handled using the special "1;*" encoding.
 
 ===============================================================================
-6.  Credits                                         *fixkey-credits*
+7.  Credits                                         *fixkey-credits*
 
 Developed by Michael Henry (vim at drmikehenry.com).
 
