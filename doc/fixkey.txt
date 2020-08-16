@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.3.11
+*fixkey*      Version 0.3.12
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -362,7 +362,7 @@ Aliased keys:
 3.4   Setup Linux console                           *fixkey-term-linux*
 
 There is no additional setup for using the Linux text-mode console
-(TERM=linux).
+(TERM=linux, TERM=linux-16color, etc.).
 
 Inoperable keys (terminal sends no codes):
 
@@ -833,6 +833,11 @@ Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 
 ===============================================================================
 5.  ChangeLog                                       *fixkey-changelog*
+
+Version 0.3.12   Date    2020-08-16                 *fixkey-changelog-0.3.12*
+
+  - Extend detection of TERM=linux to include TERM=linux-16color and similar
+    (thanks to Andy Weidenbaum).
 
 Version 0.3.11   Date    2019-08-25                 *fixkey-changelog-0.3.11*
 
