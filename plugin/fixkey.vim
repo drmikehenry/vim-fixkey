@@ -614,7 +614,7 @@ function! Fixkey_setup()
     elseif $TERM =~# '^konsole\(-\d*color\)\?$'
         call Fixkey_setKonsoleKeys()
 
-    elseif $TERM == 'linux'
+    elseif $TERM =~# 'linux\(-\d*color\)\?$'
         call Fixkey_setLinuxKeys()
 
     elseif $TERM == 'putty-sco'
