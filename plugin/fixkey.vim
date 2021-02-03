@@ -604,8 +604,10 @@ function! Fixkey_setup()
     if $TERM =~# '^xterm\(-\d*color\)\?$'
         if $COLORTERM == "gnome-terminal"
             call Fixkey_setGnomeTerminalKeys()
-        else
+        elseif $COLORTERM == ""
             call Fixkey_setXtermKeys()
+        else
+            let g:Fixkey_termType = "unknown"
         endif
 
     elseif $TERM =~# '^gnome\(-\d*color\)\?$'
