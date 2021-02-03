@@ -638,7 +638,7 @@ function! Fixkey_setup()
         " "xterm".  This same logic is required for tmux to work correctly, but
         " Vim currently lacks support for it.  As a work-around for this
         " problem, we ensure 'ttymouse' is set correctly below.
-        set ttymouse=xterm
+        set ttymouse=sgr
 
     else
         let g:Fixkey_termType = "unknown"
