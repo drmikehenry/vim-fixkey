@@ -134,6 +134,11 @@ Therefore, in addition to installing Fixkey, there may be some
 terminal-specific setup required to make everything work properly, described
 in the following sections.
 
+But even for terminal types not explicitly supported by Fixkey, it's possible
+that things will still work smoothly because many terminals aim to emulate
+xterm and therefore set TERM to "xterm" (causing Fixkey to assume
+xterm-compatible key codes).
+
 If necessary, see |fixkey-term-testing| for methods of testing and debugging
 your terminal setup.
 
