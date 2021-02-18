@@ -452,6 +452,10 @@ Inoperable keys (terminal sends no codes):
   <M-C-End>
   <M-C-S-End>
 
+Inoperable keys (terminal sends code, but still not working):
+
+  <M-M>
+
 Aliased keys:
 
   <C-F1> - <C-F12>              (same as <F1> - <F12>)
@@ -515,6 +519,10 @@ Inoperable keys (terminal sends no codes):
   <C-S-End>
   <M-C-End>
   <M-C-S-End>
+
+Inoperable keys (terminal sends code, but still not working):
+
+  <M-M>
 
 Inoperable keys (not enough mappable keys):
 
@@ -838,6 +846,8 @@ Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 Version 0.3.13   Date    2021-02-18                 *fixkey-changelog-0.3.13*
 
   - Add support for Alt-shifted-numbers (<M-)>, <M-!>, ..., <M-(>).
+
+  - Document that <M-M> doesn't work with PuTTY for some reason.
 
 Version 0.3.12   Date    2020-08-16                 *fixkey-changelog-0.3.12*
 
