@@ -45,8 +45,8 @@ recorded macros to fail upon playback.  For example, consider recording a macro
 that contains the two keypresses <Escape> and "x".  When played back, this will
 be interpreted as the single keypress <a-x>.
 
-It's worth noting that the macro ambiguity problem exists even without fixkey
-(though fixkey increases the problem by teaching Vim about more of the
+It's worth noting that the macro ambiguity problem exists even without Fixkey
+(though Fixkey increases the problem by teaching Vim about more of the
 ambiguous keycodes sent by the terminal).  For example, consider recording a
 macro into register q by pressing qq, then typing the following keys, then
 pressing q once more:
@@ -66,12 +66,12 @@ which case executing the macro via @q will result in the following:
 
   Secondirst
 
-Additionally, fixkey sets 'ttimeoutlen' to a fairly short value of 5
+Additionally, Fixkey sets 'ttimeoutlen' to a fairly short value of 5
 milliseconds to ensure that rapid typing of two keys won't be incorrectly
 interpreted as a single keystroke.  When running over a very slow connection,
 this might cause Vim to occasionally mistake a multi-byte code for a single
 keypress (such as <Escape>OF, for example) as multiple keypresses.  To avoid
-this, set 'ttimeoutlen' in .vimrc to the desired value, and fixkey will not
+this, set 'ttimeoutlen' in .vimrc to the desired value, and Fixkey will not
 override it.  For example, to use 50 milliseconds, place this line in .vimrc:
 
   set ttimeoutlen=50
@@ -91,7 +91,7 @@ Then, re-generate your help tags with Vim's |:helptags| command, e.g.: >
 
   :helptags ~/.vim/doc
 
-You may also install fixkey using a tool like pathogen[1] by unpacking
+You may also install Fixkey using a tool like pathogen[1] by unpacking
 the downloaded archive into a bundle directory, e.g.: >
 
   ~/.vim/bundle/fixkey
@@ -130,7 +130,7 @@ that doesn't match the actual key codes sent by the terminal.  Additionally,
 Vim expects non-default behavior from most terminals, particularly with
 respect to mapping Alt-keys.
 
-Therefore, in addition to installing fixkey, there may be some
+Therefore, in addition to installing Fixkey, there may be some
 terminal-specific setup required to make everything work properly, described
 in the following sections.
 
@@ -160,14 +160,14 @@ Note that <C-Enter> generally seems to alias <Enter> on most terminals and is
 therefore unavailable.
 
 Note that <M-O> is generally encoded as <Escape>O, which is a prefix of
-several terminal keycodes; therefore, fixkey does not attempt to configure
+several terminal keycodes; therefore, Fixkey does not attempt to configure
 <M-O>.
 
 -------------------------------------------------------------------------------
 3.1   Setup xterm                                   *fixkey-term-xterm*
 
 There is not much additional setup for using xterm unless the xterm defaults
-are changed, as fixkey configures Vim to expect the correct key codes.
+are changed, as Fixkey configures Vim to expect the correct key codes.
 
 However, by default, xterm toggles its fullscreen state on <M-Enter>.  To
 allow this key to be seen by Vim, the following two lines should be added to
@@ -208,7 +208,7 @@ Weird behavior at startup:
 gnome-terminal generally uses TERM=xterm (or TERM=xterm-256color), but there
 are a number of differences with xterm that cannot be easily changed.
 Fortunately, gnome-terminal also exports the environment variable
-COLORTERM=gnome-terminal, so fixkey can detect when gnome-terminal is
+COLORTERM=gnome-terminal, so Fixkey can detect when gnome-terminal is
 masquerading as xterm and configure Vim accordingly.
 
 However, when using ssh to connect to a remote machine, the variable COLORTERM
@@ -451,7 +451,7 @@ Using PuTTY's configuration menu:
   - "Data"
     - Set "Terminal-type string" to "putty" (or "putty-256color")
 
-Leave the Terminal.Keyboard settings at their defaults, and fixkey will
+Leave the Terminal.Keyboard settings at their defaults, and Fixkey will
 configure Vim accordingly.
 
 Reserved keys (should work if environment passes them to Vim):
@@ -651,7 +651,7 @@ host terminal at present.
 -------------------------------------------------------------------------------
 3.8   Setup tmux                                    *fixkey-term-tmux*
 
-Tmux commonly shares terminal names with screen, in which case fixkey treats
+Tmux commonly shares terminal names with screen, in which case Fixkey treats
 them the same; see the "Setup screen" section for supported terminal names
 starting with "screen".
 
@@ -932,7 +932,7 @@ Version 0.3.4    Date    2014-06-26                 *fixkey-changelog-0.3.4*
   - Change 'ttimelen' to 5 milliseconds to avoid incorrect keystroke
     decoding for fast typists.
 
-  - Document problems cause by using macros with fixkey.
+  - Document problems cause by using macros with Fixkey.
 
 Version 0.3.3    Date    2014-05-17                 *fixkey-changelog-0.3.3*
 
