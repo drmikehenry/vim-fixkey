@@ -6,6 +6,7 @@ Fixkey helps Vim use the non-ASCII keys of a terminal emulator, permitting
 mapping of several classes of characters, including:
 
 - Alt-numbers (<M-0> - <M-9>).
+- Alt-shifted-numbers (<M-)>, <M-!>, ..., <M-(>).
 - Alt-lowercase letters (<M-a> - <M-z>).
 - Alt-uppercase letters (<M-A> - <M-Z>), except <M-O> due to keycode
   ambiguity).

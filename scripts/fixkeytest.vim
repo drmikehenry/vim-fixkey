@@ -61,4 +61,8 @@ call MapTestKey("S-Enter")
 call MapTestKey("M-Enter")
 "call MapModifiedTestKey("kEnter")
 
+for c in split('!@#$%^&*()', '\zs')
+    call MapTestKey("M-" . c)
+endfor
+
 " vim:tw=80:ts=4:sts=4:sw=4:et:ai

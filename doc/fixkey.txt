@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.3.12
+*fixkey*      Version 0.3.13
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -124,6 +124,7 @@ When properly setup, a fully functioning terminal can provide the following
 keys:
 
   - Alt-numbers (<M-0> - <M-9>).
+  - Alt-shifted-numbers (<M-)>, <M-!>, ..., <M-(>).
   - Alt-lowercase letters (<M-a> - <M-z>).
   - Alt-uppercase letters (<M-A> - <M-Z>), except <M-O> due to keycode
     ambiguity).
@@ -833,6 +834,10 @@ Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 
 ===============================================================================
 5.  ChangeLog                                       *fixkey-changelog*
+
+Version 0.3.13   Date    2021-02-18                 *fixkey-changelog-0.3.13*
+
+  - Add support for Alt-shifted-numbers (<M-)>, <M-!>, ..., <M-(>).
 
 Version 0.3.12   Date    2020-08-16                 *fixkey-changelog-0.3.12*
 

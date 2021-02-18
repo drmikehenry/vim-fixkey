@@ -70,6 +70,29 @@ function! Fixkey_resetMetaNumbers()
     endwhile
 endfunction
 
+function! Fixkey_setMetaShiftNumbers()
+    for c in split('!@#$%^&*()', '\zs')
+        if c == '@'
+            " For some reason, M-@ is special in console Vim.
+            " See https://github.com/vim/vim/issues/5759 for some details.
+            call Fixkey_setNewKey("<M-" . c . ">", "\e" . c)
+        else
+            call Fixkey_setKey("<M-" . c . ">", "\e" . c)
+        endif
+        " On XTerm with modifyOtherKeys in use, keys like <M-!> are recognized
+        " as <M-S-!> (with a redundant shift modifier).  Map these back to
+        " their canonical form.
+        execute 'map <m-s-' . c . '> <m-' . c . '>'
+        execute 'map! <m-s-' . c . '> <m-' . c . '>'
+    endfor
+endfunction
+
+function! Fixkey_resetMetaShiftNumbers()
+    for c in split('!@#$%^&*()', '\zs')
+        call Fixkey_setKey("<M-" . c . ">", nr2char(char2nr(c)  + 0x80))
+    endfor
+endfunction
+
 function! Fixkey_setMetaLetters()
     let c = 'a'
     while c <= 'z'
@@ -183,6 +206,7 @@ endfunction
 function! Fixkey_setXtermKeys()
     let g:Fixkey_termType = "xterm"
     call Fixkey_setMetaNumbers()
+    call Fixkey_setMetaShiftNumbers()
     call Fixkey_setMetaLetters()
     call Fixkey_setXtermFunctionKeys()
     call Fixkey_setXtermNavigationKeys()
@@ -196,6 +220,7 @@ endfunction
 function! Fixkey_setGnomeTerminalKeys()
     let g:Fixkey_termType = "gnome"
     call Fixkey_setMetaNumbers()
+    call Fixkey_setMetaShiftNumbers()
     call Fixkey_setMetaLetters()
     call Fixkey_setXtermFunctionKeys()
     call Fixkey_setXtermNavigationKeys()
@@ -206,6 +231,7 @@ endfunction
 function! Fixkey_setKonsoleKeys()
     let g:Fixkey_termType = "konsole"
     call Fixkey_setMetaNumbers()
+    call Fixkey_setMetaShiftNumbers()
     call Fixkey_setMetaLetters()
     call Fixkey_setXtermFunctionKeys()
     call Fixkey_setXtermNavigationKeys()
@@ -216,6 +242,7 @@ endfunction
 function! Fixkey_setLinuxKeys()
     let g:Fixkey_termType = "linux"
     call Fixkey_setMetaNumbers()
+    call Fixkey_setMetaShiftNumbers()
     call Fixkey_setMetaLetters()
     call Fixkey_setKey("<F1>",  "\e[[A")
     call Fixkey_setKey("<F2>",  "\e[[B")
@@ -322,6 +349,7 @@ function! Fixkey_setPuttyKeys()
     let g:Fixkey_termType = "putty"
     call Fixkey_unsetFunctionKeys()
     call Fixkey_setMetaNumbers()
+    call Fixkey_setMetaShiftNumbers()
     call Fixkey_setMetaLetters()
     call Fixkey_setPuttyF1toF12()
     call Fixkey_setPuttyShiftF3toF10()
@@ -418,6 +446,7 @@ function! Fixkey_setPuttyScoKeys()
     let g:Fixkey_termType = "putty-sco"
     call Fixkey_unsetFunctionKeys()
     call Fixkey_setMetaNumbers()
+    call Fixkey_setMetaShiftNumbers()
     call Fixkey_setMetaLetters()
     call Fixkey_setPuttyScoF1toF12()
     call Fixkey_setPuttyScoShiftF1toF12()
@@ -547,6 +576,7 @@ function! Fixkey_setRxvtKeys()
     " <Help> is \e28~, which aliases <S-F5>.  Undefine it to avoid conflict.
     set <Help>=
     call Fixkey_setMetaNumbers()
+    call Fixkey_setMetaShiftNumbers()
     call Fixkey_setMetaLetters()
     call Fixkey_setRxvtShiftF3toF12()
     call Fixkey_setRxvtCtrlF1toF12()
@@ -574,6 +604,7 @@ endfunction
 
 function! Fixkey_setScreenCompatibleKeys()
     call Fixkey_setMetaNumbers()
+    call Fixkey_setMetaShiftNumbers()
     call Fixkey_setMetaLetters()
     call Fixkey_setXtermFunctionKeys()
     call Fixkey_setXtermHomeEnd()
