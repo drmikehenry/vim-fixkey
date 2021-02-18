@@ -103,6 +103,23 @@ supports mapping Alt-keys natively.  To avoid interfering with proper Neovim
 operation, Fixkey skips its initialization on that editor as a convenience to
 users that share configuration files between Vim and Neovim.
 
+Fixkey will attempt to detect the terminal type and configure itself
+accordingly.  To override Fixkey's detection, set g:Fixkey_termType in vimrc
+to one of the supported values below; use "unknown" or the empty string
+to disable Fixkey.
+
+Supported values for g:Fixkey_termType:
+
+- xterm         XTerm or compatible
+- gnome         Gnome Terminal
+- konsole       Plasma Konsole
+- linux         Linux console
+- putty         PuTTY
+- putty-sco     PuTTY in "SCO" mode
+- rxvt          Rxvt
+- screen        GNU screen
+- tmux          Tmux
+
 ===============================================================================
 3.  Terminal Setup                                  *fixkey-term-setup*
 
@@ -852,6 +869,9 @@ Version 0.3.13   Date    2021-02-18                 *fixkey-changelog-0.3.13*
 
   - Avoid overriding a non-empty 'ttymouse' setting for tmux (thanks to Kevin
     MacMartin).
+
+  - Allow setting g:Fixkey_termType in vimrc to override Fixkey's terminal
+    detection algorithm.
 
 Version 0.3.12   Date    2020-08-16                 *fixkey-changelog-0.3.12*
 
