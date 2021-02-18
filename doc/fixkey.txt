@@ -639,16 +639,17 @@ them the same; see the "Setup screen" section for supported terminal names
 starting with "screen".
 
 In versions prior to 2.1, tmux required TERM to start with "screen"; starting
-with version 2.1, users may choose terminal names beginning with "tmux" instead
-(e.g., "tmux", "tmux-256color", etc.).  This is useful for enabling italics
-under tmux.  Fixkey will detect such names and configure the keys the same as if
-TERM were "screen".  In addition, Fixkey will set 'ttymouse' to "xterm" as a
-work-around; otherwise, Vim mis-detects the mouse and configures the
-mouse-related codes such that the <Home> and <End> key mappings don't work
-correctly.  It works for "screen" only because Vim has special-case code to set
-'ttymouse' to "xterm" whenever TERM starts with "screen", but Vim lacks that
-same special-case code for "tmux".  To change the default value for TERM to
-"tmux", add the following to your ~/.tmux.conf file: >
+with version 2.1, users may choose terminal names beginning with "tmux"
+instead (e.g., "tmux", "tmux-256color", etc.).  This is useful for enabling
+italics under tmux.  Fixkey will detect such names and configure the keys the
+same as if TERM were "screen".  In addition, Fixkey will change a non-empty
+'ttymouse' to "xterm" as a work-around; otherwise, Vim mis-detects the mouse
+and configures the mouse-related codes such that the <Home> and <End> key
+mappings don't work correctly.  Changing 'ttymouse' isn't necessary for
+"screen" because Vim defaults 'ttymouse' to "xterm" when TERM starts with
+"screen"; in addition, starting with version v8.0.0030, this is done when TERM
+starts with "tmux" as well.  To change the default value for TERM to "tmux",
+add the following to your ~/.tmux.conf file: >
 
   set-option -g default-terminal tmux
 <
@@ -848,6 +849,9 @@ Version 0.3.13   Date    2021-02-18                 *fixkey-changelog-0.3.13*
   - Add support for Alt-shifted-numbers (<M-)>, <M-!>, ..., <M-(>).
 
   - Document that <M-M> doesn't work with PuTTY for some reason.
+
+  - Avoid overriding a non-empty 'ttymouse' setting for tmux (thanks to Kevin
+    MacMartin).
 
 Version 0.3.12   Date    2020-08-16                 *fixkey-changelog-0.3.12*
 
@@ -1069,6 +1073,7 @@ Contributors (in chronological order):
 - Kevin MacMartin
 - Andy Weidenbaum
 - Ralf Vogler
+- Kevin MacMartin
 
 ===============================================================================
 vim:sts=2:et:ai:tw=78:fo=tcq2:ft=help:

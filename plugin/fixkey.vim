@@ -666,8 +666,11 @@ function! Fixkey_setup()
         " When TERM begins with "screen", Vim helpfully sets 'ttymouse' to
         " "xterm".  This same logic is required for tmux to work correctly, but
         " Vim currently lacks support for it.  As a work-around for this
-        " problem, we ensure 'ttymouse' is set correctly below.
-        set ttymouse=xterm
+        " problem, we ensure 'ttymouse' is set to Vim's default if it's
+        " currently empty (otherwise, we leave it alone).
+        if &ttymouse == ''
+            set ttymouse=xterm
+        endif
 
     else
         let g:Fixkey_termType = "unknown"
