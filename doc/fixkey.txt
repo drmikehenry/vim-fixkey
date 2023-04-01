@@ -868,7 +868,9 @@ These events may be helpful in determining suitable values for
   continues to initialize plugins.  For Xterm with patchlevel 141 or higher,
   Vim further queries the terminal's key codes directly (see |xterm-codes|).
   If Fixkey has already performed its setup, Vim can misinterpret these
-  terminal negotiations as keystrokes, causing misbehavior.  To work around
+  terminal negotiations as keystrokes, causing misbehaviors (including
+  swallowing the first user keypress after startup and failing to set certain
+  Vim variables related to terminal settings like cursor style).  To work around
   this, Fixkey attempts to delay its setup based on the value of
   g:Fixkey_setupDelay, an integer representing the number of milliseconds to
   delay.  There are three cases:
@@ -876,8 +878,8 @@ These events may be helpful in determining suitable values for
     g:Fixkey_setupDelay     behavior
     -------------------     --------
     0                       Perform setup immediately
-    positive                Delay setup by this number of milliseconds
-    negative                Delay until the |TermReponse| autocmd fires
+    positive                Delay this many milliseconds after |TermReponse|
+    negative                Delay only until the |TermResponse| autocmd fires
 
   Support for timers was added in Vim 7.4.1578.  If no timer support is found,
   Fixkey falls back to waiting for the |TermResponse| autocmd.
@@ -892,6 +894,26 @@ Version 0.3.14   Date    2023-04-01                 *fixkey-changelog-0.3.14*
 
   - Add `g:Fixkey_useTimestamps` to produce system calls visible to `strace` for
     timing measurements.
+
+  - Change `g:Fixkey_setupDelay` to be measured from reception of the
+    |TermResponse| autocmd instead of the start of Fixkey initialization.  This
+    removes some variability in startup times and makes the choice of delay
+    value easier.  The default delay is now 400 ms.  The previous default of 10
+    ms was guesswork based on user feedback showing that delaying even 0 ms was
+    sufficient; however, measurements provided by `g:Fixkey_useTimestamps` show
+    that the delays actually provided by Vim's timer mechanism were
+    substantially longer than what was requested, because timers may be
+    postponed while Vim is busy with various startup tasks.  Waiting until
+    |TermResponse| ensures that Vim has actually received the initial terminal
+    response.  Additional delay is needed to ensure Vim receives and processes
+    any responses to Vim's subsequent terminal queries.
+
+    This additional delay works around problems with newer Vim and
+    gnome-terminal.  The sequence `ESC P` is found in gnome-terminal's response
+    to some Vim query.  If Fixkey setup occurs before this response is received,
+    Vim misinterprets the `ESC P` as a keypress (Alt+P), corrupting the
+    processing of the response and causing the user's first keypress to be
+    swallowed.
 
 Version 0.3.13   Date    2021-02-18                 *fixkey-changelog-0.3.13*
 

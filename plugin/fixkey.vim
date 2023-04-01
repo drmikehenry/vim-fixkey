@@ -712,6 +712,21 @@ function! Fixkey_setup()
     endif
 endfunction
 
+" Invoked when `TermResponse` is received.
+function! Fixkey_termResponse()
+    call Fixkey_timestamp('TermResponse')
+    if exists('*timer_start') && g:Fixkey_setupDelay > 0
+        function! Fixkey_setupCallback(timerId)
+            call Fixkey_setup()
+        endfunction
+        call timer_start(g:Fixkey_setupDelay, 'Fixkey_setupCallback')
+    else
+        " Without Vim's timer feature, we perform setup immediately and
+        " hope that waiting for `TermResponse` has delayed enough.
+        call Fixkey_setup()
+    endif
+endfunction
+
 " With newer Xterm, Vim enters an extended negotiation during startup.  First
 " Vim queries for Xterm's version and receives the response into v:termresponse.
 " When Xterm's patchlevel is 141 or higher, Vim continues querying for Xterm's
@@ -721,29 +736,23 @@ endfunction
 " have completed.
 
 if !exists("g:Fixkey_setupDelay")
-    " User testing suggests that any value greater than zero is sufficient, and
-    " that 10 ms would provide some margin.
-    let g:Fixkey_setupDelay = 10
+    " With newer Vim, responses for terminal queries about cursor styles and the
+    " like can arrive significantly after `TermResponse` has been received.
+    " Performing setup before these responses have been processed can cause
+    " Vim to misinterpret the responses.  Measurements have shown the need
+    " for delays up to 400 ms in some cases.
+    let g:Fixkey_setupDelay = 400
 endif
 
 call Fixkey_timestamp('prepare for setup()')
 if g:Fixkey_setupDelay == 0
     call Fixkey_setup()
-
-elseif exists('*timer_start') && g:Fixkey_setupDelay > 0
-    function! Fixkey_setupCallback(timerId)
-        call Fixkey_setup()
-    endfunction
-    call timer_start(g:Fixkey_setupDelay, 'Fixkey_setupCallback')
-
 else
-    " Without Vim's timer feature, we fall back to using an autocmd and hope
-    " that it delays enough.
+    " Delay at least until `TermResponse`.
     augroup Fixkey
         autocmd!
-        autocmd TermResponse * call Fixkey_setup()
+        autocmd TermResponse * call Fixkey_termResponse()
     augroup END
-
 endif
 
 " Restore saved 'cpoptions'.
