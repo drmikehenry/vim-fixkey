@@ -1,5 +1,5 @@
 *fixkey.txt*  Plugin to fix key codes for console Vim
-*fixkey*      Version 0.3.13
+*fixkey*      Version 0.3.14
 
 ==============================================================================
 1.  Introduction                                    |fixkey-intro|
@@ -14,6 +14,7 @@
 3.7   Setup screen                                  |fixkey-term-screen|
 3.8   Setup tmux                                    |fixkey-term-tmux|
 3.9   Terminal testing                              |fixkey-term-testing|
+3.10  Timing testing                                |fixkey-timing-testing|
 4.  Configuration                                   |fixkey-configuration|
 5.  ChangeLog                                       |fixkey-changelog|
 6.  References                                      |fixkey-references|
@@ -836,6 +837,27 @@ Using just "xxd" shows the sequence when not in keypad transmit mode: >
 
 Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 
+-------------------------------------------------------------------------------
+3.10  Timing testing                                *fixkey-timing-testing*
+
+To help measure timing-related issues with Fixkey, the Unix utility `strace` may
+be used.  On Linux, `strace -tt` adds timestamps to captured system calls.
+Fixkey timing events can be turned into `stat()` system calls with predictable
+filenames by setting this variable in `.vimrc` >
+  let g:Fixkey_useTimestamps = 1
+<
+
+For example: >
+  strace -tt vim 2> strace.out
+<
+Interesting events during startup include Vim terminal reads and writes, as well
+as `stat()` calls with filenames of the form `FIXKEY_TIMESTAMP_XXX`.
+To display those interesting events with `grep`: >
+  grep -E 'read\(0|write\(1|stat.*FIXKEY' strace.out
+<
+These events may be helpful in determining suitable values for
+`g:Fixkey_setupDelay` as discussed in |fixkey-configuration|.
+
 ===============================================================================
 4.  Configuration                                   *fixkey-configuration*
 
@@ -865,6 +887,11 @@ Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 
 ===============================================================================
 5.  ChangeLog                                       *fixkey-changelog*
+
+Version 0.3.14   Date    2023-04-01                 *fixkey-changelog-0.3.14*
+
+  - Add `g:Fixkey_useTimestamps` to produce system calls visible to `strace` for
+    timing measurements.
 
 Version 0.3.13   Date    2021-02-18                 *fixkey-changelog-0.3.13*
 

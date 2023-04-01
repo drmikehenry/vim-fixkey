@@ -18,6 +18,19 @@ endif
 let s:save_cpoptions = &cpoptions
 set cpoptions&vim
 
+if !exists('g:Fixkey_useTimestamps')
+    let g:Fixkey_useTimestamps = 0
+endif
+
+function! Fixkey_timestamp(message)
+    if g:Fixkey_useTimestamps
+        " This results in a `stat()` system call with a filename
+        " based on the message, allowing timing measurements via
+        " `strace -tt` on Linux.
+        call filereadable('FIXKEY_TIMESTAMP_' . a:message)
+    endif
+endfunction
+
 function! Fixkey_setKey(key, keyCode)
     execute "set " . a:key . "=" . a:keyCode
 endfunction
@@ -655,6 +668,7 @@ function! Fixkey_detect()
 endfunction
 
 function! Fixkey_setup()
+    call Fixkey_timestamp('setup() start')
     if !exists('g:Fixkey_termType')
         let g:Fixkey_termType = Fixkey_detect()
     endif
@@ -712,6 +726,7 @@ if !exists("g:Fixkey_setupDelay")
     let g:Fixkey_setupDelay = 10
 endif
 
+call Fixkey_timestamp('prepare for setup()')
 if g:Fixkey_setupDelay == 0
     call Fixkey_setup()
 
