@@ -667,8 +667,15 @@ function! Fixkey_detect()
     return termType
 endfunction
 
+let g:Fixkey_timer = -1
+let g:Fixkey_setupDone = 0
+
 function! Fixkey_setup()
     call Fixkey_timestamp('setup() start')
+    if g:Fixkey_setupDone
+        return
+    endif
+    let g:Fixkey_setupDone = 1
     if !exists('g:Fixkey_termType')
         let g:Fixkey_termType = Fixkey_detect()
     endif
@@ -712,18 +719,40 @@ function! Fixkey_setup()
     endif
 endfunction
 
-" Invoked when `TermResponse` is received.
-function! Fixkey_termResponse()
-    call Fixkey_timestamp('TermResponse')
+" Prepare for setup.
+function! Fixkey_prepareSetup()
+    call Fixkey_timestamp('prepareSetup')
+    if g:Fixkey_setupDone
+        return
+    endif
     if exists('*timer_start') && g:Fixkey_setupDelay > 0
         function! Fixkey_setupCallback(timerId)
+            let g:Fixkey_timer = -1
             call Fixkey_setup()
         endfunction
-        call timer_start(g:Fixkey_setupDelay, 'Fixkey_setupCallback')
+        if g:Fixkey_timer != -1
+            call timer_stop(g:Fixkey_timer)
+        endif
+        let g:Fixkey_timer = timer_start(
+                \ g:Fixkey_setupDelay, 'Fixkey_setupCallback')
     else
         " Without Vim's timer feature, we perform setup immediately and
         " hope that waiting for `TermResponse` has delayed enough.
         call Fixkey_setup()
+    endif
+endfunction
+
+" Invoked when `TermResponse` is received.
+function! Fixkey_termResponse()
+    call Fixkey_timestamp('TermResponse')
+    call Fixkey_prepareSetup()
+endfunction
+
+" Invoked when `VimEnter` is received.
+function! Fixkey_vimEnter()
+    call Fixkey_timestamp('VimEnter')
+    if g:Fixkey_timer == -1
+        call Fixkey_prepareSetup()
     endif
 endfunction
 
@@ -744,7 +773,7 @@ if !exists("g:Fixkey_setupDelay")
     let g:Fixkey_setupDelay = 400
 endif
 
-call Fixkey_timestamp('prepare for setup()')
+call Fixkey_timestamp('final initialization')
 if g:Fixkey_setupDelay == 0
     call Fixkey_setup()
 else
@@ -752,6 +781,7 @@ else
     augroup Fixkey
         autocmd!
         autocmd TermResponse * call Fixkey_termResponse()
+        autocmd VimEnter * call Fixkey_vimEnter()
     augroup END
 endif
 

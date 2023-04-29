@@ -841,19 +841,18 @@ Now, <Up> yields <Escape>[A because keypad transmit mode is off.
 3.10  Timing testing                                *fixkey-timing-testing*
 
 To help measure timing-related issues with Fixkey, the Unix utility `strace` may
-be used.  On Linux, `strace -tt` adds timestamps to captured system calls.
+be used.  On Linux, `strace -ttt` adds timestamps to captured system calls.
 Fixkey timing events can be turned into `stat()` system calls with predictable
 filenames by setting this variable in `.vimrc` >
   let g:Fixkey_useTimestamps = 1
 <
-
 For example: >
-  strace -tt vim 2> strace.out
+  strace -ttt -o strace.out vim
 <
-Interesting events during startup include Vim terminal reads and writes, as well
-as `stat()` calls with filenames of the form `FIXKEY_TIMESTAMP_XXX`.
-To display those interesting events with `grep`: >
-  grep -E 'read\(0|write\(1|stat.*FIXKEY' strace.out
+Interesting events during startup include the initial `execve` call, Vim
+terminal reads and writes, as well as `stat()` calls with filenames of the form
+`FIXKEY_TIMESTAMP_XXX`.  To display those interesting events with `grep`: >
+  grep -E 'execve|read\(0|write\(1|stat.*FIXKEY' strace.out
 <
 These events may be helpful in determining suitable values for
 `g:Fixkey_setupDelay` as discussed in |fixkey-configuration|.
@@ -861,7 +860,7 @@ These events may be helpful in determining suitable values for
 ===============================================================================
 4.  Configuration                                   *fixkey-configuration*
 
-*g:Fixkey_setupDelay*     integer (milliseconds); default 10
+*g:Fixkey_setupDelay*     integer (milliseconds); default 400
 
   At startup, Vim queries the terminal for its version number (see |t_RV|
   and |v:termresponse|).  The response is received asynchronously while Vim
@@ -878,17 +877,38 @@ These events may be helpful in determining suitable values for
     g:Fixkey_setupDelay     behavior
     -------------------     --------
     0                       Perform setup immediately
-    positive                Delay this many milliseconds after |TermReponse|
+    positive                Delay this many milliseconds after |TermResponse|
     negative                Delay only until the |TermResponse| autocmd fires
 
-  Support for timers was added in Vim 7.4.1578.  If no timer support is found,
-  Fixkey falls back to waiting for the |TermResponse| autocmd.
+  Ideally, `g:Fixkey_setupDelay` would always be measured from |TermResponse|;
+  however, some terminals (notably tmux, PuTTY, and Linux console) do not
+  trigger a |TermResponse| autocmd.  To ensure Fixkey setup occurs in all cases,
+  the |VimEnter| autocmd is used in addition to |TermResponse|.  The timer for
+  `g:Fixkey_setupDelay` will be started by the first-arriving of these autocmd
+  events.  If |TermResponse| arrives before |VimEnter|, it will always be used
+  as the time reference for `g:Fixkey_setupDelay`.  If |VimEnter| arrives first,
+  the timer will be started while Fixkey awaits the arrival of |TermResponse|;
+  if the timer expires before |TermResponse| arrives, Fixkey setup will be
+  invoked immediately, and otherwise the timer will be restarted at
+  |TermResponse| arrival.
 
-  See https://github.com/drmikehenry/vim-fixkey/issues/11 for more
-  information.
+  Support for timers was added in Vim 7.4.1578.  If no timer support is found
+  and `g:Fixkey_setupDelay` is not zero, Fixkey setup will occur with the
+  arrival of the |TermResponse| or |VimEnter| autocmd, whichever comes first.
+
+  For more information, see:
+  - https://github.com/drmikehenry/vim-fixkey/issues/11
+  - https://github.com/drmikehenry/vim-fixkey/issues/16
 
 ===============================================================================
 5.  ChangeLog                                       *fixkey-changelog*
+
+Version 0.3.15   Date    2023-04-29                 *fixkey-changelog-0.3.15*
+
+  - Fix regression in version 0.3.14 for terminals that lack |TermResponse|.
+    Now, in addition to |TermResponse|, Fixkey watches for the |VimEnter|
+    autocmd to ensure Fixkey setup will always be invoked.  Notably tmux, PuTTY,
+    and Linux console do not trigger |TermResponse| autocmd events.
 
 Version 0.3.14   Date    2023-04-01                 *fixkey-changelog-0.3.14*
 
